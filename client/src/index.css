@@ -28,6 +28,7 @@
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
+  --weight-heading: var(--weight-semibold);
   --tracking-title: -0.01em;
 
   --gap-small: 6px;
@@ -107,7 +108,7 @@ h4,
 h5,
 h6 {
   margin: 0;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-heading);
   letter-spacing: var(--tracking-title);
 }
 

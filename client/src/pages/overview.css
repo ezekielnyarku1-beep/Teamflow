@@ -24,7 +24,7 @@
 .overview-header h1 {
   margin-right: auto;
   font-size: var(--text-page-title);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-heading);
 }
 
 .overview-columns {
@@ -45,7 +45,7 @@
 
 .overview-section-heading h2 {
   font-size: var(--text-section-title);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-heading);
 }
 
 .overview-section-heading a {

@@ -131,7 +131,7 @@
 
 .page-header h1 {
   font-size: var(--text-page-title);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-heading);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -341,7 +341,7 @@
   min-height: var(--row-list);
   padding: 0 24px;
   font-size: var(--text-section-title);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-heading);
   background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
@@ -511,7 +511,7 @@
 
 .issue-title-input {
   font-size: var(--text-panel-title);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-heading);
   letter-spacing: var(--tracking-title);
 }
 
@@ -941,7 +941,7 @@
 
 .message-page h1 {
   font-size: var(--text-page-title);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-heading);
 }
 
 .message-page p {

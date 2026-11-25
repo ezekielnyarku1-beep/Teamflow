@@ -1,7 +1,7 @@
 export const statuses = [
   { value: 'BACKLOG', label: 'Backlog' },
   { value: 'TODO', label: 'Todo' },
-  { value: 'IN_PROGRESS', label: 'In Progress' },
+  { value: 'IN_PROGRESS', label: 'In progress' },
   { value: 'DONE', label: 'Done' },
   { value: 'CANCELED', label: 'Canceled' },
 ]
