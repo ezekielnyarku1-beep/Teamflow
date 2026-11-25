@@ -3,6 +3,7 @@ import { Outlet, matchPath, useLocation } from 'react-router'
 import CommandMenu from './CommandMenu.jsx'
 import CreateIssueDialog from './CreateIssueDialog.jsx'
 import Sidebar from './Sidebar.jsx'
+import Toast from './Toast.jsx'
 import { ShellContext } from '../lib/shellContext.js'
 
 const isTypingIn = target =>
@@ -12,6 +13,8 @@ export default function Shell() {
   const { pathname } = useLocation()
   const [createIssue, setCreateIssue] = useState({ open: false, teamKey: '', cycleId: null })
   const [commandMenuOpen, setCommandMenuOpen] = useState(false)
+  const [toast, setToast] = useState(null)
+  const hideToast = useCallback(() => setToast(null), [])
   const settingsOpen = Boolean(matchPath('/settings/*', pathname))
   const pageTeamKey = matchPath('/team/:teamKey', pathname)?.params.teamKey ?? ''
 
@@ -19,7 +22,11 @@ export default function Shell() {
     (teamKey, cycleId = null) => setCreateIssue({ open: true, teamKey: teamKey ?? pageTeamKey, cycleId }),
     [pageTeamKey],
   )
-  const shell = useMemo(() => ({ openCreateIssue, openCommandMenu: () => setCommandMenuOpen(true) }), [openCreateIssue])
+  const shell = useMemo(() => ({
+    openCreateIssue,
+    openCommandMenu: () => setCommandMenuOpen(true),
+    showToast: message => setToast({ message, id: crypto.randomUUID() }),
+  }), [openCreateIssue])
 
   useEffect(() => {
     function handleShortcut(event) {
@@ -55,6 +62,7 @@ export default function Shell() {
         />
       )}
       {commandMenuOpen && <CommandMenu onClose={() => setCommandMenuOpen(false)} />}
+      {toast && <Toast key={toast.id} message={toast.message} onDone={hideToast} />}
     </ShellContext.Provider>
   )
 }

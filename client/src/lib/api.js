@@ -55,6 +55,7 @@ export const getIssues = filters => request('GET', `/api/issues${toQueryString(f
 export const getIssue = identifier => request('GET', `/api/issues/${encode(identifier)}`)
 export const createIssue = fields => request('POST', '/api/issues', fields)
 export const updateIssue = (identifier, changes) => request('PATCH', `/api/issues/${encode(identifier)}`, changes)
+export const deleteIssue = identifier => request('DELETE', `/api/issues/${encode(identifier)}`)
 export const addComment = (identifier, body) => request('POST', `/api/issues/${encode(identifier)}/comments`, { body })
 export const getLabels = () => request('GET', '/api/labels')
 export const createLabel = fields => request('POST', '/api/labels', fields)

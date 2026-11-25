@@ -1,0 +1,91 @@
+.context-menu {
+  z-index: 50;
+  width: 200px;
+  max-height: min(360px, calc(100vh - 16px));
+}
+
+.context-submenu {
+  width: 240px;
+}
+
+.context-menu:focus {
+  outline: none;
+}
+
+.context-menu li.is-danger {
+  color: var(--danger);
+}
+
+.context-menu kbd {
+  margin-left: auto;
+}
+
+.context-menu-arrow {
+  color: var(--mut);
+}
+
+.context-menu .context-menu-divider {
+  height: 1px;
+  min-height: 0;
+  margin: 4px 0;
+  padding: 0;
+  background: var(--line);
+  pointer-events: none;
+}
+
+.context-menu-search {
+  margin-bottom: 4px;
+  font-size: var(--text-base);
+}
+
+.button.is-danger {
+  color: var(--panel);
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.button.is-danger:hover:not(:disabled) {
+  background: var(--danger);
+  filter: brightness(1.08);
+}
+
+.toast {
+  position: fixed;
+  z-index: 60;
+  bottom: 16px;
+  left: 50%;
+  max-width: calc(100% - 32px);
+  padding: var(--gap-small) 12px;
+  color: var(--panel);
+  background: var(--tx);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+  font-size: var(--text-base);
+  translate: -50% 0;
+}
+
+@media (max-width: 768px) {
+  .context-menu li {
+    min-height: var(--tap-target);
+  }
+
+  .context-menu-search {
+    min-height: var(--tap-target);
+    font-size: var(--text-input-phone);
+  }
+
+  .toast {
+    bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toast {
+    animation: toast-in var(--motion) var(--ease-out) both;
+  }
+
+  @keyframes toast-in {
+    from { opacity: 0; translate: -50% 8px; }
+    to { opacity: 1; translate: -50% 0; }
+  }
+}

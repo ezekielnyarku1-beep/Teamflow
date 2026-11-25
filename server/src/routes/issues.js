@@ -1,11 +1,12 @@
 import { Router } from 'express'
 import { prisma } from '../db.js'
-import { findVisibleIssue, findVisibleTeam, teamKeyOf, visibleTeamsWhere } from '../access.js'
+import { findVisibleIssue, findVisibleTeam, isAdmin, teamKeyOf, visibleTeamsWhere } from '../access.js'
 import { syncCycles } from '../cycles.js'
 import { HttpError } from '../errors.js'
 import { IssuePriority, IssueStatus } from '../generated/prisma/enums.ts'
 import { checkIssueReferences, createIssue, describeChanges, notifyAssignee } from '../issues.js'
 import {
+  creationActivity,
   issueDetailInclude,
   issueInclude,
   personSelect,
@@ -112,6 +113,15 @@ issuesRouter.patch('/:identifier', async (request, response) => {
     return updated
   }, { maxWait: 10000, timeout: 20000 })
   response.json(serializeIssue(after))
+})
+
+issuesRouter.delete('/:identifier', async (request, response) => {
+  const issue = await findVisibleIssue(request.user, request.params.identifier, { activities: creationActivity })
+  if (!isAdmin(request.user) && issue.activities[0]?.actorId !== request.user.id) {
+    throw new HttpError(403, 'Only admins and the person who created this issue can delete it.')
+  }
+  await prisma.issue.delete({ where: { id: issue.id } })
+  response.status(204).end()
 })
 
 issuesRouter.post('/:identifier/comments', async (request, response) => {

@@ -59,10 +59,15 @@ export function useUpdateIssue() {
   return useMutation({
     mutationFn: ({ identifier, changes }) => api.updateIssue(identifier, changes),
     onMutate: async ({ identifier, changes }) => {
+      const teamKey = identifier.split('-')[0]
       const labels = client.getQueryData(['labels'])
+      const members = client.getQueryData(['team', teamKey])?.members
+      const projects = client.getQueryData(['projects', { team: teamKey }])
       const shown = {
         ...Object.fromEntries(Object.entries(changes).filter(([field]) => fieldsShownRightAway.includes(field))),
         ...(changes.labelIds && labels && { labels: labels.filter(label => changes.labelIds.includes(label.id)) }),
+        ...('assigneeId' in changes && members && { assignee: members.find(member => member.id === changes.assigneeId) ?? null }),
+        ...('projectId' in changes && projects && { project: projects.find(project => project.id === changes.projectId) ?? null }),
       }
       await Promise.all([client.cancelQueries({ queryKey: ['issues'] }), client.cancelQueries({ queryKey: ['issue', identifier] })])
       client.setQueriesData({ queryKey: ['issues'] }, issues =>
@@ -71,6 +76,11 @@ export function useUpdateIssue() {
     },
     onSettled: refresh,
   })
+}
+
+export function useDeleteIssue() {
+  const refresh = useRefreshWorkData()
+  return useMutation({ mutationFn: api.deleteIssue, onSettled: refresh })
 }
 
 export function useCreateIssue() {

@@ -2,7 +2,7 @@ import { useDroppable } from '@dnd-kit/core'
 import BoardCard from './BoardCard.jsx'
 import StatusIcon from './StatusIcon.jsx'
 
-export default function BoardColumn({ status, issues, onOpen, onStatusChange }) {
+export default function BoardColumn({ status, issues, onOpen, onMenu, onStatusChange }) {
   const { setNodeRef, isOver } = useDroppable({ id: status.value })
 
   return (
@@ -14,7 +14,7 @@ export default function BoardColumn({ status, issues, onOpen, onStatusChange }) 
       </h2>
       <ul className="board-cards">
         {issues.map(issue => (
-          <BoardCard key={issue.id} issue={issue} onOpen={onOpen} onStatusChange={onStatusChange} />
+          <BoardCard key={issue.id} issue={issue} onOpen={onOpen} onMenu={onMenu} onStatusChange={onStatusChange} />
         ))}
       </ul>
     </section>

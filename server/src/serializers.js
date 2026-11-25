@@ -11,11 +11,14 @@ export const serializeCycleRef = cycle => cycle && ({
   endDate: toDateString(cycle.endDate),
 })
 
+export const creationActivity = { where: { field: null }, orderBy: { createdAt: 'asc' }, take: 1, select: { actorId: true, field: true } }
+
 export const issueInclude = {
   team: teamSelect,
   assignee: personSelect,
   project: { select: { id: true, name: true } },
   cycle: cycleSelect,
+  activities: creationActivity,
   labels: { select: { id: true, name: true, color: true }, orderBy: { name: 'asc' } },
 }
 
@@ -45,6 +48,7 @@ export function serializeIssue(issue) {
     assignee: issue.assignee,
     project: issue.project,
     cycle: serializeCycleRef(issue.cycle),
+    creatorId: issue.activities.find(activity => activity.field === null)?.actorId ?? null,
     labels: issue.labels,
   }
 }

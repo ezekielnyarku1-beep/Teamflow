@@ -13,7 +13,7 @@ function moveFocusWithArrows(event) {
   }
 }
 
-export default function IssueList({ issues, onOpen }) {
+export default function IssueList({ issues, onOpen, onMenu }) {
   const groups = statuses
     .map(status => ({ ...status, issues: issues.filter(issue => issue.status === status.value) }))
     .filter(group => group.issues.length)
@@ -29,7 +29,7 @@ export default function IssueList({ issues, onOpen }) {
           </h2>
           <ul className="issue-rows">
             {group.issues.map(issue => (
-              <IssueRow key={issue.id} issue={issue} onOpen={onOpen} />
+              <IssueRow key={issue.id} issue={issue} onOpen={onOpen} onMenu={onMenu} />
             ))}
           </ul>
         </section>

@@ -188,3 +188,18 @@ test('blank lines at the start of a description are removed, indentation is kept
   const saved = await server.call('PATCH', `/api/issues/ENG-${issue.number}`, { as: engMember, body: { description: '\n \n\n    code' } })
   assert.equal(saved.body.description, '    code')
 })
+
+test('issues say who created them, and only admins or the creator can delete them', async () => {
+  const mine = await addIssue(fixtures.eng, fixtures.engUser, { title: 'Mine', status: 'TODO' })
+  const others = await addIssue(fixtures.eng, fixtures.adminUser, { title: 'Not mine', status: 'TODO' })
+  const listed = await server.call('GET', '/api/issues?team=ENG', { as: engMember })
+  assert.equal(listed.body.find(issue => issue.title === 'Mine').creatorId, fixtures.engUser.id)
+
+  assert.equal((await server.call('DELETE', `/api/issues/ENG-${others.number}`, { as: engMember })).status, 403)
+  assert.equal((await server.call('DELETE', `/api/issues/ENG-${mine.number}`, { as: desMember })).status, 404)
+  await server.call('POST', `/api/issues/ENG-${mine.number}/comments`, { as: engMember, body: { body: 'Gone soon' } })
+  assert.equal((await server.call('DELETE', `/api/issues/ENG-${mine.number}`, { as: engMember })).status, 204)
+  assert.equal((await server.call('GET', `/api/issues/ENG-${mine.number}`, { as: engMember })).status, 404)
+  assert.equal((await server.call('DELETE', `/api/issues/ENG-${others.number}`, { as: admin })).status, 204)
+  assert.equal(await prisma.comment.count(), 0)
+})

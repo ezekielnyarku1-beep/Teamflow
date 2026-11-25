@@ -7,12 +7,15 @@ import StatusPicker from './StatusPicker.jsx'
 import { formatShortDate } from '../lib/format.js'
 import { priorityLabel } from '../lib/issueOptions.js'
 
-export default function BoardCard({ issue, onOpen, onStatusChange }) {
+export default function BoardCard({ issue, onOpen, onMenu, onStatusChange }) {
   const { setNodeRef, listeners, transform, isDragging } = useDraggable({ id: issue.identifier })
   const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` } : undefined
 
   return (
-    <li ref={setNodeRef} style={style} className={`board-card${isDragging ? ' is-dragging' : ''}`} {...listeners}>
+    <li ref={setNodeRef} style={style} className={`board-card${isDragging ? ' is-dragging' : ''}`}
+      onContextMenu={event => onMenu(issue, event)}
+      {...listeners}
+    >
       <div className="board-card-top">
         <span className="issue-row-id">{issue.identifier}</span>
         <PriorityIcon priority={issue.priority} />
