@@ -11,14 +11,14 @@ function Brand() {
   )
 }
 
-export default function AuthLayout({ title, subtitle, footer, showCheck = false, serifHeadline = false, children }) {
+export default function AuthLayout({ title, subtitle, footer, showCheck = false, children }) {
   return (
     <div className="auth">
       <aside className="auth-hero" aria-label="About Overview Teams">
         <Brand />
         <div className="hero-body">
           <p className="hero-eyebrow">Innovation &amp; Excellence</p>
-          <p className={serifHeadline ? 'hero-headline is-serif' : 'hero-headline'}>Forward-Thinking Solutions For <em>Tomorrow’s Challenges.</em></p>
+          <p className="hero-headline">Forward-Thinking Solutions For <em>Tomorrow’s Challenges.</em></p>
         </div>
         <div className="auth-sculpture" aria-hidden="true" />
         <p className="hero-foot">Overview Teams</p>

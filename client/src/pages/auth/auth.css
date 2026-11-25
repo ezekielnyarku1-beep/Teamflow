@@ -92,9 +92,6 @@
   line-height: 1.1;
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-title);
-}
-
-.hero-headline.is-serif {
   font-family: "Anthropic Serif", "AnthropicSerif", Georgia, "Times New Roman", serif;
 }
 

@@ -29,6 +29,11 @@ function usesMobileNavigation() {
 export default function Sidebar() {
   const isMobile = useSyncExternalStore(subscribeToNavigationWidth, usesMobileNavigation)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [wasMobile, setWasMobile] = useState(isMobile)
+  if (wasMobile !== isMobile) {
+    setWasMobile(isMobile)
+    setMenuOpen(false)
+  }
   const closeButton = useRef(null)
   const { openCreateIssue, openCommandMenu } = useShell()
   const navigate = useNavigate()

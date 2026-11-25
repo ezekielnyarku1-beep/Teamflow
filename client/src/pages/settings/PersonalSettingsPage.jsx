@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useOutletContext } from 'react-router'
 import QueryState from '../../components/QueryState.jsx'
 import { appearances, getAppearance, saveAppearance } from '../../lib/appearance.js'

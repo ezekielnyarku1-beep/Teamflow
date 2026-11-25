@@ -61,7 +61,7 @@ viewsRouter.get('/:id', async (request, response) => {
 
 viewsRouter.post('/', async (request, response) => {
   const fields = await readViewFields(request.user, readBody(request), { creating: true })
-  if (await prisma.savedView.count({ where: { ownerId: request.user.id } }) >= maxViews) {
+  if (await prisma.savedView.count({ where: ownVisibleViews(request.user) }) >= maxViews) {
     throw new HttpError(400, `You can save up to ${maxViews} views. Delete one first.`)
   }
   const view = await prisma.savedView.create({ data: { ...fields, ownerId: request.user.id }, include: viewInclude })

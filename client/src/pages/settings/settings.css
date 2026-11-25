@@ -1,4 +1,4 @@
-﻿.shell.shell-settings { grid-template: 1fr / minmax(0, 1fr); }
+.shell.shell-settings { grid-template: 1fr / minmax(0, 1fr); }
 .shell-settings .shell-main { padding-bottom: 0; }
 .settings {
   display: grid;
@@ -129,7 +129,7 @@
 @media (max-width: 768px) {
   .settings { grid-template-columns: clamp(120px, 30vw, 184px) minmax(0, 1fr); }
   .settings-sidebar { padding: 12px 8px; }
-  .settings-sidebar input { font-size: var(--text-small); }
+  .settings-sidebar input { font-size: var(--text-input-phone); }
   .settings-sidebar a { min-height: var(--tap-target); }
   .settings-body { width: min(100% - 24px, 720px); padding-block: 24px 40px; }
   .settings-row { flex-wrap: wrap; padding-inline: 12px; }

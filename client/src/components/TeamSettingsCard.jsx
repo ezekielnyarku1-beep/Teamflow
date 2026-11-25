@@ -79,7 +79,7 @@ export default function TeamSettingsCard({ team, users }) {
       <div className="settings-card">
         <form className="settings-row settings-pair" onSubmit={saveName}>
           <div className="settings-row-main">
-            <label htmlFor={`team-name-${team.key}`} className="settings-row-title">Team name</label>
+            <label htmlFor={`team-name-${team.key}`} className="settings-row-title">Team name<span className="visually-hidden"> for {team.name}</span></label>
             <span className="settings-description">Shown in team navigation.</span>
           </div>
           <div className="settings-inline">

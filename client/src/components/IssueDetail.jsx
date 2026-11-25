@@ -13,11 +13,15 @@ const trimDescription = value => value.replace(/^(?:[ \t]*\r?\n)+/, '').trimEnd(
 function useDraft(savedValue, normalize, toChanges, saveAsync) {
   const [draft, setDraft] = useState(null)
 
+  const fresh = () => ({ original: savedValue, value: savedValue, focused: false, failed: false })
+
   function send(value, before) {
-    setDraft({ original: value, value, focused: false, failed: false })
-    saveAsync(toChanges(value)).then(
+    const changes = toChanges(value)
+    if (!changes) return setDraft(null)
+    setDraft(current => ({ ...current, original: value, value, failed: false }))
+    saveAsync(changes).then(
       () => setDraft(current => (current && !current.focused && current.value === value ? null : current)),
-      () => setDraft(current => (current && current.value === value ? { ...current, original: before, failed: true } : current)),
+      () => setDraft(current => current && { ...current, original: before, failed: true }),
     )
   }
 
@@ -27,11 +31,13 @@ function useDraft(savedValue, normalize, toChanges, saveAsync) {
     discard: () => setDraft(null),
     field: {
       value: draft ? draft.value : savedValue,
-      onFocus: () => setDraft(current => ({ ...(current ?? { original: savedValue, value: savedValue }), focused: true })),
-      onChange: event => setDraft({ ...draft, value: event.target.value }),
+      onFocus: () => setDraft(current => ({ ...(current ?? fresh()), focused: true })),
+      onChange: event => setDraft({ ...(draft ?? fresh()), value: event.target.value }),
       onBlur: () => {
-        const unchanged = normalize(draft.value) === normalize(draft.original)
-        if (unchanged || !toChanges(draft.value)) return setDraft(null)
+        if (!draft) return
+        if (draft.failed) return setDraft({ ...draft, focused: false })
+        if (normalize(draft.value) === normalize(draft.original)) return setDraft(null)
+        setDraft({ ...draft, focused: false })
         send(draft.value, draft.original)
       },
     },
