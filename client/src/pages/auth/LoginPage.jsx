@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import AuthLayout from './AuthLayout.jsx'
 import FormError from '../../components/FormError.jsx'
 import GoogleButton from '../../components/GoogleButton.jsx'
 import PasswordField from '../../components/PasswordField.jsx'
 import SubmitButton from '../../components/SubmitButton.jsx'
 import TextField from '../../components/TextField.jsx'
-import { signIn } from '../../lib/auth.js'
+import { markPendingVerification, signIn, verifyEmailPath } from '../../lib/auth.js'
 import { isEmail } from '../../lib/authValidation.js'
 import { useFormAction } from '../../lib/useFormAction.js'
 import { useGoogleError } from '../../lib/useGoogleError.js'
@@ -17,6 +17,7 @@ export default function LoginPage({ onGoogle }) {
   const form = useFormAction()
   const googleError = useGoogleError()
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   function submit(event) {
     event.preventDefault()
@@ -24,7 +25,13 @@ export default function LoginPage({ onGoogle }) {
     form.run(async () => {
       if (!isEmail(email)) throw new Error('Enter a valid email address.')
       if (!password) throw new Error('Enter your password.')
-      await signIn(email.trim(), password)
+      try {
+        await signIn(email.trim(), password)
+      } catch (error) {
+        if (error.code !== 'EMAIL_NOT_VERIFIED') throw error
+        markPendingVerification(email)
+        navigate(verifyEmailPath(email.trim()))
+      }
     })
   }
 

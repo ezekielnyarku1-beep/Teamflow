@@ -7,7 +7,14 @@ export const authClient = createAuthClient(import.meta.env.VITE_NEON_AUTH_URL, {
 })
 
 const tooManyAttempts = 'Too many attempts. Wait a few seconds and try again.'
-const messageFor = (error, fallback) => (error.status === 429 ? tooManyAttempts : fallback)
+const codeProblems = [
+  ['INVALID_OTP', 'Invalid OTP', 'That code is not right. Check the email and try again.'],
+  ['OTP_EXPIRED', 'OTP expired', 'That code has expired. Send a new one.'],
+  ['TOO_MANY_ATTEMPTS', 'Too many attempts', 'Too many wrong codes. Send a new one.'],
+]
+const codeMessage = error => codeProblems.find(([code, text]) => error.code === code || error.message === text)?.[2]
+const messageFor = (error, fallback) => (error.status === 429 ? tooManyAttempts : codeMessage(error) ?? fallback)
+const pendingKey = 'overview-teams-verify-email'
 
 let cachedToken = null
 
@@ -36,9 +43,9 @@ async function callAuth(action, fallback) {
   try {
     result = await action()
   } catch (error) {
-    throw new Error(messageFor(error, fallback), { cause: error })
+    throw Object.assign(new Error(messageFor(error, fallback), { cause: error }), { code: error?.code })
   }
-  if (result?.error) throw new Error(messageFor(result.error, fallback))
+  if (result?.error) throw Object.assign(new Error(messageFor(result.error, fallback)), { code: result.error.code })
 }
 
 async function startFreshSession(action, fallback) {
@@ -63,6 +70,47 @@ export function signInWithGoogle(redirectTo) {
     }),
     'Google sign-in could not start. Try again.',
   )
+}
+
+export function markPendingVerification(email) {
+  try {
+    window.sessionStorage.setItem(pendingKey, email.trim().toLowerCase())
+  } catch {
+    return false
+  }
+  return true
+}
+
+export function clearPendingVerification() {
+  try {
+    window.sessionStorage.removeItem(pendingKey)
+  } catch {
+    return false
+  }
+  return true
+}
+
+export function needsEmailCode(user) {
+  try {
+    return Boolean(user && !user.emailVerified && window.sessionStorage.getItem(pendingKey) === user.email.toLowerCase())
+  } catch {
+    return false
+  }
+}
+
+export const verifyEmailPath = (email, codeSent = false) =>
+  `/verify-email?${new URLSearchParams({ email, ...(codeSent && { sent: '1' }) })}`
+
+export function sendEmailCode(email) {
+  return callAuth(
+    () => authClient.emailOtp.sendVerificationOtp({ email, type: 'email-verification' }),
+    'The code could not be sent. Try again in a moment.',
+  )
+}
+
+export async function verifyEmailCode(email, otp) {
+  await startFreshSession(() => authClient.emailOtp.verifyEmail({ email, otp }), 'The code could not be checked. Try again.')
+  clearPendingVerification()
 }
 
 export function signUp({ name, email, password }) {

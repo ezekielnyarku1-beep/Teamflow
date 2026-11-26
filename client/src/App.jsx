@@ -7,6 +7,7 @@ import { signInWithGoogle } from './lib/auth.js'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage.jsx'
 import LoginPage from './pages/auth/LoginPage.jsx'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage.jsx'
+import VerifyEmailPage from './pages/auth/VerifyEmailPage.jsx'
 import SignUpPage from './pages/auth/SignUpPage.jsx'
 import CyclePage from './pages/CyclePage.jsx'
 import InboxPage from './pages/InboxPage.jsx'
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
       </Route>
       <Route path="reset-password" element={<ResetPasswordPage />} />
+      <Route path="verify-email" element={<VerifyEmailPage />} />
       <Route element={<RequireSession />}>
         <Route element={<Shell />}>
           <Route index element={<Navigate to="/overview" replace />} />

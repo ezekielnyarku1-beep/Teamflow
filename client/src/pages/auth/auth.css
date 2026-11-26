@@ -362,3 +362,34 @@
     to { opacity: 1; translate: 0 0; }
   }
 }
+
+.code-input {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-bottom: .9rem;
+}
+
+.code-input-box {
+  width: 100%;
+  min-width: 0;
+  height: 3.25rem;
+  padding: 0;
+  color: var(--auth-ink);
+  background: var(--auth-surface);
+  border: 1px solid var(--auth-border);
+  border-radius: .55rem;
+  font-size: var(--text-auth-title);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.code-input.is-invalid .code-input-box {
+  border-color: var(--danger);
+}
+
+.auth-code-resend {
+  margin-top: 1rem;
+  text-align: center;
+}

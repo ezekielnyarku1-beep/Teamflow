@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import AuthLayout from './AuthLayout.jsx'
 import FormError from '../../components/FormError.jsx'
 import GoogleButton from '../../components/GoogleButton.jsx'
 import PasswordField from '../../components/PasswordField.jsx'
 import SubmitButton from '../../components/SubmitButton.jsx'
 import TextField from '../../components/TextField.jsx'
-import { signUp } from '../../lib/auth.js'
+import { clearPendingVerification, markPendingVerification, signUp, verifyEmailPath } from '../../lib/auth.js'
 import { checkNewPassword, isEmail, passwordHint } from '../../lib/authValidation.js'
 import { useFormAction } from '../../lib/useFormAction.js'
 import { useGoogleError } from '../../lib/useGoogleError.js'
@@ -18,6 +18,7 @@ export default function SignUpPage({ onGoogle }) {
   const [confirm, setConfirm] = useState('')
   const form = useFormAction()
   const googleError = useGoogleError()
+  const navigate = useNavigate()
 
   function submit(event) {
     event.preventDefault()
@@ -26,7 +27,14 @@ export default function SignUpPage({ onGoogle }) {
       if (!name.trim()) throw new Error('Enter your full name.')
       if (!isEmail(email)) throw new Error('Enter a valid email address.')
       checkNewPassword(password, confirm)
-      await signUp({ name: name.trim(), email: email.trim(), password })
+      markPendingVerification(email)
+      try {
+        await signUp({ name: name.trim(), email: email.trim(), password })
+      } catch (error) {
+        clearPendingVerification()
+        throw error
+      }
+      navigate(verifyEmailPath(email.trim(), true), { replace: true })
     })
   }
 
