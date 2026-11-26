@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import Dialog from './Dialog.jsx'
+import PriorityIcon from './PriorityIcon.jsx'
+import StatusIcon from './StatusIcon.jsx'
 import QueryState from './QueryState.jsx'
 import { priorities, statuses } from '../lib/issueOptions.js'
 import { useCreateIssue, useTeams } from '../lib/queries.js'
@@ -37,7 +39,7 @@ function CreateIssueForm({ teams, defaultTeamKey, cycleId, onClose }) {
           </select>
         </label>
         <label>
-          Status
+          <span className="issue-field-label"><StatusIcon status={fields.status} />Status</span>
           <select className="input" value={fields.status} onChange={set('status')}>
             {statuses.map(status => (
               <option key={status.value} value={status.value}>
@@ -47,7 +49,7 @@ function CreateIssueForm({ teams, defaultTeamKey, cycleId, onClose }) {
           </select>
         </label>
         <label>
-          Priority
+          <span className="issue-field-label"><PriorityIcon priority={fields.priority} />Priority</span>
           <select className="input" value={fields.priority} onChange={set('priority')}>
             {priorities.map(priority => (
               <option key={priority.value} value={priority.value}>

@@ -28,13 +28,14 @@ export default function SignUpPage({ onGoogle }) {
       if (!isEmail(email)) throw new Error('Enter a valid email address.')
       checkNewPassword(password, confirm)
       markPendingVerification(email)
+      let codeSent
       try {
-        await signUp({ name: name.trim(), email: email.trim(), password })
+        codeSent = await signUp({ name: name.trim(), email: email.trim(), password })
       } catch (error) {
         clearPendingVerification()
         throw error
       }
-      navigate(verifyEmailPath(email.trim(), true), { replace: true })
+      navigate(verifyEmailPath(email.trim(), codeSent), { replace: true })
     })
   }
 

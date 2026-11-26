@@ -8,6 +8,6 @@ export default function GuestOnly() {
 
   if (session.isPending) return <Skeleton label="the sign-in page" layout="form" />
   const user = session.data?.user
-  if (user) return <Navigate to={needsEmailCode(user) ? verifyEmailPath(user.email, true) : safeRedirectPath(searchParams.get('redirectTo'))} replace />
+  if (user) return <Navigate to={needsEmailCode(user) ? verifyEmailPath(user.email) : safeRedirectPath(searchParams.get('redirectTo'))} replace />
   return <Outlet />
 }

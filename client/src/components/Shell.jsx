@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'reac
 import { Navigate, Outlet, matchPath, useLocation, useNavigationType, useSearchParams } from 'react-router'
 import CommandMenu from './CommandMenu.jsx'
 import CreateIssueDialog from './CreateIssueDialog.jsx'
+import ErrorBoundary from './ErrorBoundary.jsx'
 import Sidebar from './Sidebar.jsx'
 import Toast from './Toast.jsx'
 import { recall, remember } from '../lib/pageMemory.js'
@@ -88,7 +89,9 @@ export default function Shell() {
       <div className={settingsOpen ? 'shell shell-settings' : 'shell'}>
         {!settingsOpen && <Sidebar />}
         <main className="shell-main">
-          <Outlet />
+          <ErrorBoundary resetKey={pathname}>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
       {createIssue.open && (

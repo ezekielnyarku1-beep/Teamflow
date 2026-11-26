@@ -95,6 +95,13 @@
   flex: none;
 }
 
+.overview-priority {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  vertical-align: middle;
+}
+
 .overview-due.is-overdue {
   color: var(--danger);
 }

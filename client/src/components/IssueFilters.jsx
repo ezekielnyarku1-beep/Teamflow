@@ -1,4 +1,5 @@
 import Popover from './Popover.jsx'
+import PriorityIcon from './PriorityIcon.jsx'
 import { countActiveFilters, emptyFilter } from '../lib/issueFilter.js'
 import { priorities } from '../lib/issueOptions.js'
 
@@ -19,6 +20,7 @@ function CheckboxGroup({ legend, options, selected, onChange }) {
             onChange={event =>
               onChange(event.target.checked ? [...selected, option.value] : selected.filter(value => value !== option.value))}
           />
+          {option.icon}
           {option.label}
         </label>
       ))}
@@ -38,7 +40,7 @@ export default function IssueFilters({ issues, filter, onChange }) {
         <div className="filter-menu">
           <CheckboxGroup
             legend="Priority"
-            options={priorities.map(({ value, label }) => ({ value, label }))}
+            options={priorities.map(option => ({ ...option, icon: <PriorityIcon priority={option.value} /> }))}
             selected={filter.priorities}
             onChange={set('priorities')}
           />

@@ -30,6 +30,8 @@ enum IssuePriority {
 
 enum NotificationType {
   ASSIGNED
+  COMMENTED
+  STATUS_CHANGED
 }
 
 model User {

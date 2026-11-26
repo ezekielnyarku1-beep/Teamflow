@@ -1,7 +1,8 @@
 export default function ProgressBar({ progress }) {
   const summary = progress.issueCount === 0
     ? 'No issues yet'
-    : `${progress.donePercent}% done · ${progress.inProgressPercent}% in progress`
+    : <><span className="progress-text-done">{progress.donePercent}% done</span>
+        {' · '}<span className="progress-text-active">{progress.inProgressPercent}% in progress</span></>
 
   return (
     <div className="progress">

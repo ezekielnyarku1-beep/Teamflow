@@ -49,6 +49,32 @@ export async function notifyAssignee(tx, { issueId, assigneeId, actorId }) {
   }
 }
 
+// Comment and status notifications are extras: if they cannot be saved (for example before the database migration
+// that adds their types has run), the comment or change itself still goes through and the problem is only logged.
+export async function notifyPeople(db, { issueId, actorId, type, userIds }) {
+  const recipients = [...new Set(userIds.filter(id => id && id !== actorId))]
+  if (!recipients.length) return
+  try {
+    await db.notification.createMany({ data: recipients.map(userId => ({ userId, actorId, issueId, type })) })
+  } catch (error) {
+    console.error(`Could not save ${type} notifications:`, error)
+  }
+}
+
+// Tells the assignee and everyone who commented earlier. Never throws, so a saved comment is never reported as failed.
+export async function notifyAboutComment(db, { issueId, commentId, actorId, assigneeId }) {
+  try {
+    const earlier = await db.comment.findMany({
+      where: { issueId, id: { not: commentId } },
+      select: { authorId: true },
+      distinct: ['authorId'],
+    })
+    await notifyPeople(db, { issueId, actorId, type: 'COMMENTED', userIds: [assigneeId, ...earlier.map(comment => comment.authorId)] })
+  } catch (error) {
+    console.error('Could not work out who to tell about a comment:', error)
+  }
+}
+
 export function describeChanges(before, after) {
   const comparisons = [
     ['title', before.title, after.title],

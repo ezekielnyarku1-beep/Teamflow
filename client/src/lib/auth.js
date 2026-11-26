@@ -1,6 +1,9 @@
 import { createAuthClient } from '@neon/auth'
 import { BetterAuthReactAdapter } from '@neon/auth/react/adapters'
+import { safeRedirectPath, signUpSentCode } from './authPaths.js'
 import { queryClient } from './queryClient.js'
+
+export { safeRedirectPath, verifyEmailPath } from './authPaths.js'
 
 export const authClient = createAuthClient(import.meta.env.VITE_NEON_AUTH_URL, {
   adapter: BetterAuthReactAdapter(),
@@ -47,12 +50,14 @@ async function callAuth(action, fallback) {
     throw Object.assign(new Error(messageFor(error, fallback), { cause: error }), { code: error?.code })
   }
   if (result?.error) throw Object.assign(new Error(messageFor(result.error, fallback)), { code: result.error.code })
+  return result?.data
 }
 
 async function startFreshSession(action, fallback) {
-  await callAuth(action, fallback)
+  const data = await callAuth(action, fallback)
   forgetAccessToken()
   queryClient.clear()
+  return data
 }
 
 export function signIn(email, password) {
@@ -103,9 +108,6 @@ export function needsEmailCode(user) {
   }
 }
 
-export const verifyEmailPath = (email, codeSent = false) =>
-  `/verify-email?${new URLSearchParams({ email, ...(codeSent && { sent: '1' }) })}`
-
 export function sendEmailCode(email) {
   return callAuth(
     () => authClient.emailOtp.sendVerificationOtp({ email, type: 'email-verification' }),
@@ -118,11 +120,13 @@ export async function verifyEmailCode(email, otp) {
   clearPendingVerification()
 }
 
-export function signUp({ name, email, password }) {
-  return startFreshSession(
+// Resolves to true when Neon Auth already emailed a code (see signUpSentCode).
+export async function signUp({ name, email, password }) {
+  const data = await startFreshSession(
     () => authClient.signUp.email({ name, email, password }),
     'The account could not be created. If you already have one, log in or reset your password.',
   )
+  return signUpSentCode(data)
 }
 
 export function signOut() {
@@ -141,8 +145,4 @@ export function resetPassword(token, newPassword) {
     () => authClient.resetPassword({ token, newPassword }),
     'This reset link has expired or was already used. Ask for a new one.',
   )
-}
-
-export function safeRedirectPath(value) {
-  return value && value.startsWith('/') && !value.startsWith('//') && !value.startsWith('/\\') ? value : '/overview'
 }

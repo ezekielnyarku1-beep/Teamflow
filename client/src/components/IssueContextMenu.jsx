@@ -1,11 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Check } from 'lucide-react'
 import Avatar from './Avatar.jsx'
 import Dialog from './Dialog.jsx'
 import PriorityIcon from './PriorityIcon.jsx'
 import StatusIcon from './StatusIcon.jsx'
 import { priorities, priorityLabel, statusLabel, statuses } from '../lib/issueOptions.js'
 import { useLabels, useMe, useProjects, useTeam } from '../lib/queries.js'
+import { iconProps } from '../lib/icons.js'
 import './contextMenu.css'
 
 const edgeGap = 8
@@ -140,7 +142,7 @@ function Submenu({ issue, item, menuRef, anchorIndex, onPick, onBack }) {
           >
             {option.icon}
             <span className="picker-label">{option.label}</span>
-            {option.selected && <span className="picker-check" aria-hidden="true">✓</span>}
+            {option.selected && <Check {...iconProps} className="picker-check" />}
             {index < 10 && searchable && <kbd aria-hidden="true">{index}</kbd>}
           </li>
         ))}

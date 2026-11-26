@@ -6,6 +6,12 @@ import StatusIcon from '../components/StatusIcon.jsx'
 import { formatDateTime } from '../lib/format.js'
 import { useMarkAllNotificationsRead, useMarkNotification, useNotifications } from '../lib/queries.js'
 
+const actions = {
+  ASSIGNED: 'assigned you',
+  COMMENTED: 'commented on',
+  STATUS_CHANGED: 'changed the status of',
+}
+
 export default function InboxPage() {
   const notifications = useNotifications()
   const mark = useMarkNotification()
@@ -26,7 +32,7 @@ export default function InboxPage() {
       <QueryState query={notifications} label="your inbox">
         {data =>
           data.notifications.length === 0 ? (
-            <p className="empty-state">Nothing here yet. When someone assigns an issue to you, it shows up here.</p>
+            <p className="empty-state">Nothing here yet. You hear about issues assigned to you, status changes on them, and comments on issues you are assigned to or have commented on.</p>
           ) : (
             <ul className="inbox-list">
               {data.notifications.map(notification => (
@@ -42,7 +48,7 @@ export default function InboxPage() {
                     <Avatar name={notification.actor.name} />
                     <span className="inbox-text">
                       <span>
-                        <strong>{notification.actor.name}</strong> assigned you{' '}
+                        <strong>{notification.actor.name}</strong> {actions[notification.type] ?? 'updated'}{' '}
                         <span className="muted">{notification.issue.identifier}</span>
                       </span>
                       <span className="inbox-title">

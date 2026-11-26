@@ -79,3 +79,38 @@ test('notifications for a team you left are hidden', async () => {
   assert.equal(body.unreadCount, 0)
   assert.deepEqual(body.notifications, [])
 })
+
+test('a comment notifies the assignee and earlier commenters, but not the person who wrote it', async () => {
+  const issue = await addIssue(fixtures.eng, fixtures.adminUser, { title: 'Talk about this', status: 'TODO', assigneeId: fixtures.engUser.id })
+  const path = `/api/issues/ENG-${issue.number}/comments`
+
+  assert.equal((await server.call('POST', path, { as: engMember, body: { body: 'First thoughts' } })).status, 201)
+  assert.equal((await inbox(engMember)).body.unreadCount, 0)
+
+  assert.equal((await server.call('POST', path, { as: admin, body: { body: 'Replying' } })).status, 201)
+  const [notification] = (await inbox(engMember)).body.notifications
+  assert.equal(notification.type, 'COMMENTED')
+  assert.equal(notification.actor.name, 'Admin Person')
+  assert.equal((await inbox(engMember)).body.unreadCount, 1)
+
+  assert.equal((await server.call('POST', path, { as: engMember, body: { body: 'Thanks' } })).status, 201)
+  const adminInbox = (await inbox(admin)).body
+  assert.equal(adminInbox.unreadCount, 1)
+  assert.equal(adminInbox.notifications[0].type, 'COMMENTED')
+})
+
+test('a status change notifies the assignee once, and a new assignee only gets the assignment', async () => {
+  const issue = await addIssue(fixtures.eng, fixtures.adminUser, { title: 'Move me', status: 'TODO', assigneeId: fixtures.engUser.id })
+  const path = `/api/issues/ENG-${issue.number}`
+
+  await server.call('PATCH', path, { as: admin, body: { status: 'IN_PROGRESS' } })
+  assert.deepEqual((await inbox(engMember)).body.notifications.map(item => item.type), ['STATUS_CHANGED'])
+
+  await server.call('PATCH', path, { as: engMember, body: { status: 'DONE' } })
+  assert.equal((await inbox(engMember)).body.notifications.length, 1)
+
+  const other = await addIssue(fixtures.eng, fixtures.adminUser, { title: 'Hand over', status: 'TODO' })
+  await server.call('PATCH', `/api/issues/ENG-${other.number}`, { as: admin, body: { status: 'IN_PROGRESS', assigneeId: fixtures.engUser.id } })
+  const types = (await inbox(engMember)).body.notifications.map(item => item.type)
+  assert.deepEqual(types, ['ASSIGNED', 'STATUS_CHANGED'])
+})

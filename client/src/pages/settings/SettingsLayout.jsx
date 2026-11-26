@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
+import { ArrowLeft } from 'lucide-react'
 import { useMe } from '../../lib/queries.js'
+import { iconProps } from '../../lib/icons.js'
 import './settings.css'
 
 const personal = [
@@ -34,7 +36,8 @@ export default function SettingsLayout() {
     <div className="settings">
       <nav className="settings-sidebar" aria-label="Settings">
         <Link to="/overview" className="settings-back">
-          <span aria-hidden="true">←</span> Back to app
+          <ArrowLeft {...iconProps} />
+          Back to app
         </Link>
         <select className="input settings-mobile-select" aria-label="Settings page"
           value={pathname.toLowerCase().replace(/\/$/, '') + (profile ? '?view=profile' : '')}

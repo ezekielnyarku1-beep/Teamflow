@@ -4,7 +4,7 @@ import { findVisibleIssue, findVisibleTeam, isAdmin, teamKeyOf, visibleTeamsWher
 import { syncCycles } from '../cycles.js'
 import { HttpError } from '../errors.js'
 import { IssuePriority, IssueStatus } from '../generated/prisma/enums.ts'
-import { checkIssueReferences, createIssue, describeChanges, notifyAssignee } from '../issues.js'
+import { checkIssueReferences, createIssue, describeChanges, notifyAboutComment, notifyAssignee, notifyPeople } from '../issues.js'
 import {
   creationActivity,
   issueDetailInclude,
@@ -110,9 +110,14 @@ issuesRouter.patch('/:identifier', async (request, response) => {
         })),
       })
     }
-    return updated
+    return { updated, before }
   }, { maxWait: 10000, timeout: 20000 })
-  response.json(serializeIssue(after))
+  const { updated, before } = after
+  // A new assignee already gets an "assigned" notification, so only tell an unchanged assignee about the new status.
+  if (updated.status !== before.status && updated.assigneeId === before.assigneeId) {
+    await notifyPeople(prisma, { issueId: updated.id, actorId: request.user.id, type: 'STATUS_CHANGED', userIds: [updated.assigneeId] })
+  }
+  response.json(serializeIssue(updated))
 })
 
 issuesRouter.delete('/:identifier', async (request, response) => {
@@ -131,5 +136,6 @@ issuesRouter.post('/:identifier/comments', async (request, response) => {
     data: { issueId: issue.id, authorId: request.user.id, body: readText(body.body, 'Comment', { max: 5000 }) },
     include: { author: personSelect },
   })
+  await notifyAboutComment(prisma, { issueId: issue.id, commentId: comment.id, actorId: request.user.id, assigneeId: issue.assigneeId })
   response.status(201).json(serializeComment(comment))
 })

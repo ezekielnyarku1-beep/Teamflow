@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { Check } from 'lucide-react'
+import { iconProps } from '../lib/icons.js'
 import Popover from './Popover.jsx'
 
 function PickerList({ label, options, value, multiple, onPick }) {
@@ -56,7 +58,7 @@ function PickerList({ label, options, value, multiple, onPick }) {
         >
           {option.icon}
           <span className="picker-label">{option.label}</span>
-          {isSelected(option) && <span className="picker-check" aria-hidden="true">✓</span>}
+          {isSelected(option) && <Check {...iconProps} className="picker-check" />}
         </li>
       ))}
     </ul>

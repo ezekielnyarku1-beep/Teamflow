@@ -11,6 +11,6 @@ export default function RequireSession() {
     const redirectTo = encodeURIComponent(location.pathname + location.search)
     return <Navigate to={`/login?redirectTo=${redirectTo}`} replace />
   }
-  if (needsEmailCode(session.data.user)) return <Navigate to={verifyEmailPath(session.data.user.email, true)} replace />
+  if (needsEmailCode(session.data.user)) return <Navigate to={verifyEmailPath(session.data.user.email)} replace />
   return <Outlet />
 }

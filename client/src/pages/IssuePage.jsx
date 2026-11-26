@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
+import { ArrowLeft } from 'lucide-react'
 import IssueDetail from '../components/IssueDetail.jsx'
+import { iconProps } from '../lib/icons.js'
 import { useTeam } from '../lib/queries.js'
 
 const isTypingIn = target => target instanceof Element && target.closest('input, textarea, select, [contenteditable="true"]')
@@ -38,7 +40,8 @@ export default function IssuePage() {
             navigate(-1)
           }}
         >
-          ← Back
+          <ArrowLeft {...iconProps} />
+          Back
         </Link>
         <ol className="breadcrumb">
           <li>

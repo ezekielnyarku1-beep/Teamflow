@@ -1,10 +1,11 @@
 import { useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import IssueLink from '../components/IssueLink.jsx'
+import PriorityIcon from '../components/PriorityIcon.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
 import QueryState from '../components/QueryState.jsx'
 import StatusIcon from '../components/StatusIcon.jsx'
-import { closedStatuses, priorities, statusLabel } from '../lib/issueOptions.js'
+import { closedStatuses, priorities, priorityLabel, statusLabel } from '../lib/issueOptions.js'
 import { formatShortDate } from '../lib/format.js'
 import { useIssues, useProjects } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
@@ -67,7 +68,12 @@ export default function OverviewPage() {
                           <StatusIcon status={issue.status} />
                           <span className="overview-issue-text">
                             <strong>{issue.title}</strong>
-                            <span>{issue.identifier} · {statusLabel(issue.status)}{issue.project ? ' · ' + issue.project.name : ''}</span>
+                            <span>
+                              <span className={`overview-priority is-${issue.priority}`}>
+                                <PriorityIcon priority={issue.priority} /> {priorityLabel(issue.priority)}
+                              </span>
+                              {' · '}{issue.identifier} · {statusLabel(issue.status)}{issue.project ? ' · ' + issue.project.name : ''}
+                            </span>
                           </span>
                           <span className={overdue(issue) ? 'overview-due is-overdue' : 'overview-due'}>
                             {overdue(issue) && 'Overdue · '}{issue.dueDate ? formatShortDate(issue.dueDate) : 'No due date'}

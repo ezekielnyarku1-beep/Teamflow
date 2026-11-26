@@ -141,9 +141,9 @@ export default function VerifyEmailPage() {
           `You can send a new code in ${secondsLeft} s.`
         ) : (
           <>
-            Did not get it?{' '}
+            Did not get it? Check your spam folder, or{' '}
             <button type="button" className="link-button" disabled={resend.busy} onClick={sendCode}>
-              {resend.busy ? 'Sending…' : 'Resend code'}
+              {resend.busy ? 'Sending…' : 'send a new code'}
             </button>
           </>
         )}

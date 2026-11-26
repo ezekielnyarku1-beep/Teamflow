@@ -156,10 +156,9 @@
   color: var(--mut);
 }
 
-.status-icon.is-IN_PROGRESS,
-.status-icon.is-DONE {
-  color: var(--acc);
-}
+.status-icon.is-TODO { color: var(--status-todo); }
+.status-icon.is-IN_PROGRESS { color: var(--status-active); }
+.status-icon.is-DONE { color: var(--status-done); }
 
 .status-icon.is-IN_PROGRESS path {
   fill: currentColor;
@@ -181,13 +180,10 @@ span.priority-icon {
   color: var(--line);
 }
 
-.priority-icon-level {
-  color: var(--tx);
-}
-
-.priority-icon.is-URGENT .priority-icon-level {
-  color: var(--danger);
-}
+:is(.priority-icon, .overview-priority).is-LOW { color: var(--priority-low); }
+:is(.priority-icon, .overview-priority).is-MEDIUM { color: var(--priority-medium); }
+:is(.priority-icon, .overview-priority).is-HIGH { color: var(--priority-high); }
+:is(.priority-icon, .overview-priority).is-URGENT { color: var(--danger); }
 
 .avatar {
   display: inline-grid;
@@ -360,6 +356,7 @@ span.priority-icon {
 
 .board-card-title {
   font-weight: var(--weight-medium);
+  overflow-wrap: anywhere;
 }
 
 .board-card-title:hover {
@@ -570,6 +567,12 @@ span.priority-icon {
   color: var(--mut);
 }
 
+.issue-field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-small);
+}
+
 .dialog-form .input {
   font-size: var(--text-base);
   color: var(--tx);
@@ -680,6 +683,7 @@ span.priority-icon {
 
 .progress {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--gap);
 }
@@ -694,18 +698,19 @@ span.priority-icon {
 }
 
 .progress-done {
-  background: var(--acc);
+  background: var(--status-done);
 }
 
 .progress-active {
-  background: var(--acc);
-  opacity: 0.4;
+  background: var(--status-active);
 }
+
+.progress-text-done { color: var(--status-done); }
+.progress-text-active { color: var(--status-active); }
 
 .progress-text {
   font-size: var(--text-small);
   color: var(--mut);
-  white-space: nowrap;
 }
 
 .page-header-meta,
@@ -1080,6 +1085,14 @@ span.priority-icon {
     display: none;
   }
 
+  .issue-row-date:empty { display: none; }
+
+  .board-card {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+
   .board {
     grid-auto-columns: 85vw;
     padding: 12px;
@@ -1120,8 +1133,6 @@ span.priority-icon {
     grid-column: 1 / -1;
   }
 
-  .progress { flex-wrap: wrap; }
-  .progress-text { white-space: normal; }
 
   .project-summary {
     padding: 12px;
@@ -1173,7 +1184,78 @@ span.priority-icon {
   }
 }
 
+@media (max-width: 480px) {
+  .issue-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 2px var(--gap);
+    padding-block: var(--gap);
+  }
+
+  .issue-row-title {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .issue-row-meta {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
 html:has(.navigation-drawer[open]) { overflow: hidden; }
+
+/* Shared states for navigation, secondary actions and selectable rows. */
+.issue-row-title,
+.project-row-name,
+.simple-row-name,
+.overview-issue-text strong,
+.overview-project strong {
+  color: color-mix(in srgb, currentColor 65%, var(--tx));
+}
+
+:is(
+  a[href], .button, .icon-button, .property-button, .link-button, .segmented button,
+  .auth .password-toggle, .auth-foot a, .auth .field-top a, .auth-resend .link-button,
+  .picker li[role], .command-list li[role], .filter-option
+):where(:not(.sidebar-item, .is-danger, .is-primary, .account-access .button, :disabled, [aria-disabled="true"])) {
+  color: var(--mut);
+
+  &:is(:focus-visible, :active, [aria-current="page"], [aria-pressed="true"],
+    [aria-expanded="true"], [aria-selected="true"], [aria-checked="true"], .is-active),
+  &.filter-option:has(input:checked, input:focus-visible) {
+    color: var(--tx);
+    background-color: var(--hover);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--tx);
+      background-color: var(--hover);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :where(a[href], .filter-option, .segmented button, .auth .password-toggle,
+    .picker li[role], .command-list li[role]) {
+    transition: color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out;
+  }
+}
+
+.input:enabled:focus-visible:not([aria-invalid="true"]),
+.google-button:enabled:is(:focus-visible, :active) {
+  border-color: var(--tx);
+}
+
+@media (hover: hover) {
+  .input:enabled:hover:not([aria-invalid="true"]),
+  .google-button:enabled:hover {
+    border-color: var(--mut);
+  }
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .dialog.navigation-drawer[open] {

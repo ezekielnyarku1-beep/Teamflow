@@ -3,10 +3,16 @@
   --panel: light-dark(#ffffff, #171a21);
   --line: light-dark(#e3e6ec, #252a34);
   --tx: light-dark(#1b1f27, #e8eaee);
-  --mut: light-dark(#6b7385, #8b93a3);
+  --mut: light-dark(#5c6575, #a0a8b7);
   --acc: var(--tx);
-  --hover: light-dark(#eef0f4, #1d212a);
+  --hover: light-dark(#e7ebf0, #292f39);
   --danger: light-dark(#c2362b, #ff7b72);
+  --priority-high: light-dark(#a8480d, #ffa464);
+  --priority-medium: light-dark(#876000, #edc457);
+  --priority-low: light-dark(#237078, #76c9cf);
+  --status-todo: light-dark(#7255a0, #b8a2e2);
+  --status-active: light-dark(#2862ad, #84b9ff);
+  --status-done: light-dark(#257447, #75ce94);
   --google-fill: light-dark(#ffffff, #131314);
   --google-stroke: light-dark(#747775, #8e918f);
   --google-text: light-dark(#1f1f1f, #e3e3e3);

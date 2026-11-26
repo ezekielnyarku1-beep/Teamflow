@@ -40,7 +40,7 @@
   width: 100%;
   min-height: var(--row-menu);
   padding: 0 var(--gap);
-  color: var(--tx);
+  color: var(--mut);
   background: transparent;
   border: 0;
   border-radius: var(--radius);
@@ -51,18 +51,24 @@
   cursor: pointer;
 }
 
-.sidebar-item:hover,
+.sidebar-top .account-button {
+  color: var(--mut);
+}
+
+.sidebar-top .account-button svg {
+  color: inherit;
+}
+
+.sidebar-top .account-button:is(:hover, :focus-visible, [aria-expanded="true"]),
+.sidebar-top .icon-button:is(:hover, :focus-visible),
+.sidebar-item:is(:hover, :focus-visible),
 .sidebar-item[aria-current="page"] {
+  color: var(--tx);
   background: var(--hover);
 }
 
 .sidebar-icon {
   flex: none;
-  color: var(--mut);
-}
-
-.sidebar-item[aria-current="page"] .sidebar-icon {
-  color: var(--tx);
 }
 
 .sidebar-item-text {
@@ -98,13 +104,13 @@
   cursor: pointer;
 }
 
-.sidebar-heading-button:hover {
-  color: var(--tx);
+.sidebar-heading-button:is(:hover, :focus-visible) {
+  color: color-mix(in srgb, var(--mut) 75%, var(--tx));
+  background: var(--hover);
 }
 
 .sidebar-chevron {
   flex: none;
-  color: var(--mut);
   opacity: 0;
 }
 
@@ -125,8 +131,8 @@
   place-items: center;
   width: 18px;
   height: 18px;
-  color: var(--bg);
-  background: var(--acc);
+  color: var(--mut);
+  background: var(--panel);
   border-radius: 4px;
   font-size: 9px;
   font-weight: var(--weight-semibold);
@@ -143,8 +149,8 @@
   margin-left: auto;
   padding: 0 var(--gap-small);
   border-radius: 9px;
-  background: var(--acc);
-  color: var(--bg);
+  background: var(--panel);
+  color: var(--mut);
   font-size: var(--text-small);
   font-weight: var(--weight-medium);
   line-height: 18px;
@@ -156,7 +162,7 @@
   width: 6px;
   height: 6px;
   margin-left: auto;
-  background: var(--acc);
+  background: var(--mut);
   border-radius: 50%;
 }
 
@@ -213,7 +219,8 @@
       transform var(--motion) var(--ease-out);
   }
 
-  .sidebar-heading-button {
-    transition: color var(--motion-fast) ease-out;
+  .sidebar-heading-button,
+  .sidebar-top .account-button {
+    transition: color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out;
   }
 }
