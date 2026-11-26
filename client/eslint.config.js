@@ -16,4 +16,8 @@ export default defineConfig([
       },
     },
   },
+  {
+    files: ['api/**/*.js', 'netlify/**/*.js', 'proxy/**/*.js', 'test/**/*.js'],
+    languageOptions: { globals: globals.node },
+  },
 ])

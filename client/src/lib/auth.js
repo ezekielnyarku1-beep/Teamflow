@@ -5,7 +5,12 @@ import { queryClient } from './queryClient.js'
 
 export { safeRedirectPath, verifyEmailPath } from './authPaths.js'
 
-export const authClient = createAuthClient(import.meta.env.VITE_NEON_AUTH_URL, {
+// The deployed website talks to Neon Auth through its own /api/neon-auth route (client/proxy/neonAuthProxy.js), so the
+// login cookie is first-party and works in browsers that block third-party cookies. Local development calls Neon
+// Auth directly.
+const authUrl = import.meta.env.PROD ? `${window.location.origin}/api/neon-auth` : import.meta.env.VITE_NEON_AUTH_URL
+
+export const authClient = createAuthClient(authUrl, {
   adapter: BetterAuthReactAdapter(),
 })
 
