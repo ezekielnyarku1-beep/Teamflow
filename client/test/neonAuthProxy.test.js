@@ -64,3 +64,19 @@ test('explains a missing setting or an unreachable service instead of crashing',
   }
   assert.equal((await proxyToNeonAuth(new Request('https://site.example/api/neon-auth/get-session'), base)).status, 502)
 })
+
+test('the Vercel entry rebuilds the original path from the rewrite and keeps other query values and the body', async () => {
+  const { originalRequest } = await import('../api/neon-auth.js')
+  const rewritten = new Request('https://site.example/api/neon-auth?__neon_auth_path=email-otp/verify-email&neon_auth_session_verifier=v1', {
+    method: 'POST',
+    headers: { origin: 'https://site.example', 'content-type': 'application/json' },
+    body: '{"otp":"123456"}',
+  })
+  const request = await originalRequest(rewritten)
+  assert.equal(request.url, 'https://site.example/api/neon-auth/email-otp/verify-email?neon_auth_session_verifier=v1')
+  assert.equal(request.headers.get('origin'), 'https://site.example')
+  assert.equal(await request.text(), '{"otp":"123456"}')
+
+  const untouched = new Request('https://site.example/api/neon-auth/get-session')
+  assert.equal(await originalRequest(untouched), untouched)
+})
