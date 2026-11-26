@@ -34,6 +34,12 @@ Open two terminals.
 1. In `server`, run `npm run dev`. The server starts on http://localhost:4000.
 2. In `client`, run `npm run dev`, then open http://localhost:5173.
 
+## Put it online
+
+- Website (Vercel or Netlify): set the project folder to `client`, the build command to `npm run build` and the output folder to `dist`. Add two environment variables: `VITE_NEON_AUTH_URL` (the Neon Auth URL) and `VITE_API_URL` (the server's address). Redeploy after changing them, because they are built into the site. `client/vercel.json` and `client/public/_redirects` make every page address open the app.
+- Server (Render): create a Blueprint from this repository; `render.yaml` sets it up. Paste `DATABASE_URL` and `DIRECT_URL` from `server/.env` when Render asks. `CLIENT_ORIGIN` lists every website address that may call the server, separated by commas.
+- Neon Auth: every website address must be in the allowed domains (`neon neon-auth domain add https://your-site`).
+
 ## Database commands (in `server`)
 
 - `npm run db:migrate` after changing `prisma/schema.prisma`.

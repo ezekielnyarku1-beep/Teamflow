@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: teamflow-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm ci && npx prisma migrate deploy
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: CLIENT_ORIGIN
+        value: https://teamlow.vercel.app,https://teamlow.netlify.app
+      - key: NEON_AUTH_URL
+        value: https://ep-old-tooth-bjnu0pbt.neonauth.c-3.eu-west-2.aws.neon.tech/neondb/auth
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
