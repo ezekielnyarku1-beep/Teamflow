@@ -27,6 +27,7 @@
   font-weight: var(--weight-medium);
 }
 .settings-back { margin-bottom: 16px; }
+.settings-mobile-select { display: none; }
 .settings-sidebar a:hover,
 .settings-sidebar a[aria-current="page"] { background: var(--hover); }
 .settings-nav-group { margin-top: 20px; }
@@ -141,4 +142,22 @@
   .settings-pair > .settings-inline { width: 100%; min-width: 0; }
   .settings-pair .settings-inline > .input { width: 100%; min-width: 0; }
   .color-input { width: var(--tap-target); height: var(--tap-target); }
+}
+
+@media (max-width: 600px) {
+  .settings { grid-template: auto 1fr / minmax(0, 1fr); }
+  .settings-sidebar {
+    position: static;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    min-height: auto;
+    padding: 8px 12px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .settings-back { margin: 0; }
+  .settings-directory { display: none; }
+  .settings-mobile-select { display: block; }
 }

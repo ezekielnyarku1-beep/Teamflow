@@ -86,8 +86,8 @@ export default function VerifyEmailPage() {
 
   function goBack() {
     leave.run(async () => {
-      clearPendingVerification()
       if (session.data?.user) await signOut()
+      clearPendingVerification()
       navigate('/signup', { replace: true })
     })
   }

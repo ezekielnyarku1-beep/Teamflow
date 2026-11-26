@@ -260,6 +260,10 @@ kbd {
 }
 
 @media (max-width: 640px) {
+  :root { --tap-target: 44px; }
+
+  .input { font-size: var(--text-input-phone); }
+
   .button,
   .icon-button,
   .property-button,

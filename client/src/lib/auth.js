@@ -8,6 +8,7 @@ export const authClient = createAuthClient(import.meta.env.VITE_NEON_AUTH_URL, {
 
 const tooManyAttempts = 'Too many attempts. Wait a few seconds and try again.'
 const codeProblems = [
+  ['INVALID_EMAIL_OR_PASSWORD', 'Invalid email or password', 'Email or password is incorrect.'],
   ['INVALID_OTP', 'Invalid OTP', 'That code is not right. Check the email and try again.'],
   ['OTP_EXPIRED', 'OTP expired', 'That code has expired. Send a new one.'],
   ['TOO_MANY_ATTEMPTS', 'Too many attempts', 'Too many wrong codes. Send a new one.'],
@@ -55,7 +56,7 @@ async function startFreshSession(action, fallback) {
 }
 
 export function signIn(email, password) {
-  return startFreshSession(() => authClient.signIn.email({ email, password }), 'Email or password is incorrect.')
+  return startFreshSession(() => authClient.signIn.email({ email, password }), 'Sign-in failed. Try again in a moment.')
 }
 
 export function signInWithGoogle(redirectTo) {
@@ -124,10 +125,8 @@ export function signUp({ name, email, password }) {
   )
 }
 
-export async function signOut() {
-  await authClient.signOut()
-  forgetAccessToken()
-  queryClient.clear()
+export function signOut() {
+  return startFreshSession(() => authClient.signOut(), 'Log out failed. Try again in a moment.')
 }
 
 export function requestPasswordReset(email) {
