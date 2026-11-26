@@ -295,7 +295,7 @@
 .account-access .button:hover {
   color: var(--bg);
   background: var(--acc);
-  filter: brightness(1.08);
+  opacity: 0.88;
 }
 
 .auth-foot {

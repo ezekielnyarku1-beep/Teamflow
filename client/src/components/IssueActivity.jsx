@@ -1,3 +1,4 @@
+import Skeleton from './Skeleton.jsx'
 import { formatDateTime, formatShortDate } from '../lib/format.js'
 import { priorityLabel, statusLabel } from '../lib/issueOptions.js'
 
@@ -19,9 +20,10 @@ export default function IssueActivity({ issue }) {
   return (
     <section className="issue-section" aria-labelledby={`activity-${issue.id}`}>
       <h3 id={`activity-${issue.id}`}>Activity</h3>
-      {issue.activity.length === 0 && <p className="muted">No activity yet.</p>}
+      {!issue.activity && <Skeleton label="activity" layout="short" />}
+      {issue.activity?.length === 0 && <p className="muted">No activity yet.</p>}
       <ol className="activity-list">
-        {issue.activity.map(entry => (
+        {issue.activity?.map(entry => (
           <li key={entry.id}>
             <span className="activity-actor">{entry.actor.name}</span> {describe(entry)}
             <time className="muted" dateTime={entry.createdAt}>

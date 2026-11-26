@@ -2,7 +2,7 @@ import { useRef, useState, useSyncExternalStore } from 'react'
 import { NavLink } from 'react-router'
 import AccountMenu from './AccountMenu.jsx'
 import Dialog from './Dialog.jsx'
-import { useMe, useNotifications, useTeams, useViews } from '../lib/queries.js'
+import { prefetchPage, useMe, useNotifications, useTeams, useViews } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
 
 const navigation = [
@@ -64,7 +64,7 @@ export default function Sidebar() {
       <ul className="sidebar-links primary-navigation">
         {navigation.map(item => (
           <li key={item.to}>
-            <NavLink to={item.to} className="sidebar-item">
+            <NavLink to={item.to} className="sidebar-item" onPointerEnter={() => prefetchPage(item.to)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d={item.path} />
               </svg>
@@ -93,7 +93,7 @@ export default function Sidebar() {
       <ul className="sidebar-links" aria-labelledby="sidebar-teams">
         {(teams.data ?? []).map(team => (
           <li key={team.key}>
-            <NavLink to={`/team/${team.key}`} className="sidebar-item">
+            <NavLink to={`/team/${team.key}`} className="sidebar-item" onPointerEnter={() => prefetchPage(`/team/${team.key}`)}>
               {team.name}
               <span className="sidebar-key">{team.key}</span>
             </NavLink>

@@ -4,7 +4,7 @@
   --line: light-dark(#e3e6ec, #252a34);
   --tx: light-dark(#1b1f27, #e8eaee);
   --mut: light-dark(#6b7385, #8b93a3);
-  --acc: light-dark(#0e8f78, #3dd6b5);
+  --acc: var(--tx);
   --hover: light-dark(#eef0f4, #1d212a);
   --danger: light-dark(#c2362b, #ff7b72);
   --google-fill: light-dark(#ffffff, #131314);
@@ -211,7 +211,7 @@ kbd {
 
 .button.is-primary:hover:not(:disabled) {
   background: var(--acc);
-  filter: brightness(1.08);
+  opacity: 0.88;
 }
 
 .button:disabled {
@@ -224,6 +224,8 @@ kbd {
   background: none;
   border: 0;
   color: var(--acc);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
   cursor: pointer;
 }
 

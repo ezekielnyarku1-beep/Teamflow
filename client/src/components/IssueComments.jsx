@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Avatar from './Avatar.jsx'
+import Skeleton from './Skeleton.jsx'
 import { formatDateTime } from '../lib/format.js'
 import { useAddComment } from '../lib/queries.js'
 
@@ -19,9 +20,10 @@ export default function IssueComments({ issue }) {
   return (
     <section className="issue-section" aria-labelledby={`comments-${issue.id}`}>
       <h3 id={`comments-${issue.id}`}>Comments</h3>
-      {issue.comments.length === 0 && <p className="muted">No comments yet.</p>}
+      {!issue.comments && <Skeleton label="comments" layout="short" />}
+      {issue.comments?.length === 0 && <p className="muted">No comments yet.</p>}
       <ul className="comment-list">
-        {issue.comments.map(comment => (
+        {issue.comments?.map(comment => (
           <li key={comment.id} className="comment">
             <div className="comment-head">
               <Avatar name={comment.author.name} />

@@ -822,7 +822,7 @@
 
   .shell-main > *,
   .settings-body > * {
-    animation: page-enter var(--motion-slow) var(--ease-out) both;
+    animation: page-enter var(--motion) var(--ease-out) both;
   }
 
   .issue-list,

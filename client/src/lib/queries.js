@@ -1,18 +1,52 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as api from './api.js'
+import { queryClient } from './queryClient.js'
+
+const teamQuery = key => ({ queryKey: ['team', key], queryFn: () => api.getTeam(key) })
+const projectsQuery = (filters = {}) => ({ queryKey: ['projects', filters], queryFn: () => api.getProjects(filters) })
+const issuesQuery = (filters = {}) => ({ queryKey: ['issues', filters], queryFn: () => api.getIssues(filters) })
+const issueQuery = identifier => ({ queryKey: ['issue', identifier], queryFn: () => api.getIssue(identifier) })
+const labelsQuery = { queryKey: ['labels'], queryFn: api.getLabels }
+
+function issueFromLists(identifier) {
+  for (const [, issues] of queryClient.getQueriesData({ queryKey: ['issues'] })) {
+    const found = issues?.find(issue => issue.identifier === identifier)
+    if (found) return found
+  }
+  return undefined
+}
+
+export function prefetchIssue(identifier) {
+  const teamKey = identifier.split('-')[0]
+  for (const query of [issueQuery(identifier), teamQuery(teamKey), projectsQuery({ team: teamKey }), labelsQuery]) {
+    queryClient.prefetchQuery(query)
+  }
+}
+
+const pagePrefetches = {
+  '/my-issues': () => [issuesQuery({ assignee: 'me' })],
+  '/projects': () => [projectsQuery()],
+  '/overview': () => [issuesQuery({ assignee: 'me' }), projectsQuery()],
+}
+
+export function prefetchPage(path) {
+  const teamKey = /^\/team\/([^/]+)$/.exec(path)?.[1]
+  const queries = teamKey ? [teamQuery(teamKey), issuesQuery({ team: teamKey })] : pagePrefetches[path]?.() ?? []
+  for (const query of queries) queryClient.prefetchQuery(query)
+}
 
 export const useMe = () => useQuery({ queryKey: ['me'], queryFn: api.getMe })
 export const useTeams = () => useQuery({ queryKey: ['teams'], queryFn: api.getTeams })
-export const useTeam = key => useQuery({ queryKey: ['team', key], queryFn: () => api.getTeam(key) })
+export const useTeam = key => useQuery(teamQuery(key))
 export const useCycles = (key, enabled = true) => useQuery({ queryKey: ['cycles', key], queryFn: () => api.getCycles(key), enabled })
 export const useViews = () => useQuery({ queryKey: ['views'], queryFn: api.getViews })
 export const useView = id => useQuery({ queryKey: ['view', id], queryFn: () => api.getView(id) })
 export const useNotifications = () => useQuery({ queryKey: ['notifications'], queryFn: api.getNotifications, refetchInterval: 60000 })
-export const useProjects = (filters = {}) => useQuery({ queryKey: ['projects', filters], queryFn: () => api.getProjects(filters) })
+export const useProjects = filters => useQuery(projectsQuery(filters))
 export const useProject = id => useQuery({ queryKey: ['project', id], queryFn: () => api.getProject(id) })
-export const useIssues = (filters = {}) => useQuery({ queryKey: ['issues', filters], queryFn: () => api.getIssues(filters) })
-export const useIssue = identifier => useQuery({ queryKey: ['issue', identifier], queryFn: () => api.getIssue(identifier) })
-export const useLabels = () => useQuery({ queryKey: ['labels'], queryFn: api.getLabels })
+export const useIssues = filters => useQuery(issuesQuery(filters))
+export const useIssue = identifier => useQuery({ ...issueQuery(identifier), placeholderData: () => issueFromLists(identifier) })
+export const useLabels = () => useQuery(labelsQuery)
 export const useUsers = () => useQuery({ queryKey: ['users'], queryFn: api.getUsers })
 export const useWorkspace = () => useQuery({ queryKey: ['workspace'], queryFn: api.getWorkspace })
 export const useIsAdmin = () => useMe().data?.role === 'ADMIN'
