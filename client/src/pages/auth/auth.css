@@ -339,14 +339,40 @@
     display: none;
   }
 
+  .auth-form {
+    padding-block: 1.5rem;
+  }
+
   .auth-box .hero-brand {
     display: flex;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .auth-box .logo-o {
     color: var(--bg);
     background: var(--acc);
+  }
+
+  .auth-sub {
+    margin-bottom: 1.5rem;
+  }
+
+  .auth .field-top {
+    align-items: center;
+  }
+
+  .auth .field-top a,
+  .auth-foot a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-block: 0;
+    margin-block: 0;
+  }
+
+  .auth .password-toggle {
+    inset-block: .125rem;
+    min-width: 44px;
   }
 
 }
