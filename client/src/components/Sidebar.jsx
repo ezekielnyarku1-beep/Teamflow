@@ -1,18 +1,15 @@
 import { useRef, useState, useSyncExternalStore } from 'react'
-import { NavLink, useNavigate } from 'react-router'
-import Avatar from './Avatar.jsx'
+import { NavLink } from 'react-router'
+import AccountMenu from './AccountMenu.jsx'
 import Dialog from './Dialog.jsx'
-import { signOut } from '../lib/auth.js'
-import { useMe, useNotifications, useTeams, useViews, useWorkspace } from '../lib/queries.js'
+import { useMe, useNotifications, useTeams, useViews } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
-import { useFormAction } from '../lib/useFormAction.js'
 
 const navigation = [
   { to: '/overview', label: 'Overview', path: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z' },
   { to: '/inbox', label: 'Inbox', path: 'M3 13h5l2 3h4l2-3h5 M5.5 5h13L21 13v6H3v-6z' },
   { to: '/my-issues', label: 'My issues', path: 'm3 6 2 2 4-4 M12 6h9 m-18 9 2 2 4-4 M12 15h9' },
   { to: '/projects', label: 'Projects', path: 'M3 7V4h6l3 3h9v13H3z' },
-  { to: '/settings', label: 'Settings', path: 'M4 7h16 M4 17h16 M8 4v6 M16 14v6' },
 ]
 
 const mobileNavigation = window.matchMedia('(max-width: 768px)')
@@ -36,14 +33,10 @@ export default function Sidebar() {
   }
   const closeButton = useRef(null)
   const { openCreateIssue, openCommandMenu } = useShell()
-  const navigate = useNavigate()
   const me = useMe()
   const teams = useTeams()
-  const workspace = useWorkspace()
   const views = useViews()
   const unread = useNotifications().data?.unreadCount ?? 0
-  const logOut = useFormAction()
-  const isAdmin = me.data?.role === 'ADMIN'
 
   function closeMenu() {
     closeButton.current?.closest('dialog')?.close()
@@ -53,16 +46,20 @@ export default function Sidebar() {
   const links = (
     <nav aria-label="Main" className={isMobile ? 'navigation-drawer-links' : 'sidebar'}
       onClick={event => { if (isMobile && event.target.closest('a')) closeMenu() }}>
-      <div className="sidebar-brand">
-        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-          <rect x="1" y="9" width="4" height="8" rx="1" />
-          <rect x="7" y="5" width="4" height="12" rx="1" />
-          <rect x="13" y="1" width="4" height="16" rx="1" />
-        </svg>
-        <span className="sidebar-brand-text">
-          Overview Teams
-          {workspace.data && <span className="sidebar-workspace">{workspace.data.name}</span>}
-        </span>
+      <div className="sidebar-top">
+        {me.data && <AccountMenu me={me.data} />}
+        <button type="button" className="icon-button" aria-label="Search" title="Search · Ctrl K" onClick={() => { closeMenu(); openCommandMenu() }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+            <circle cx="7" cy="7" r="4.5" />
+            <path d="m10.5 10.5 3 3" />
+          </svg>
+        </button>
+        <button type="button" className="icon-button" aria-label="New issue" title="New issue · C" onClick={() => { closeMenu(); openCreateIssue() }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M9.5 2.5H4a1.5 1.5 0 0 0-1.5 1.5v8A1.5 1.5 0 0 0 4 13.5h8a1.5 1.5 0 0 0 1.5-1.5V6.5" />
+            <path d="m7 9 .5-2L12.5 2l1.5 1.5-5 5z" />
+          </svg>
+        </button>
       </div>
       <ul className="sidebar-links primary-navigation">
         {navigation.map(item => (
@@ -82,17 +79,6 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
-      <div className="sidebar-actions">
-        <button type="button" className="sidebar-item" onClick={() => { closeMenu(); openCommandMenu() }}>
-          Search
-          <kbd aria-hidden="true">Ctrl K</kbd>
-        </button>
-        <button type="button" className="sidebar-item" onClick={() => { closeMenu(); openCreateIssue() }}>
-          New issue
-          <kbd aria-hidden="true">C</kbd>
-        </button>
-      </div>
-
       <h2 className="sidebar-heading" id="sidebar-teams">
         Teams
       </h2>
@@ -132,30 +118,6 @@ export default function Sidebar() {
           </NavLink>
         </li>
       </ul>
-
-      {me.data && (
-        <div className="sidebar-user">
-          <Avatar name={me.data.name} />
-          <span className="sidebar-user-name">{me.data.name}</span>
-          <span className="muted">{isAdmin ? 'Admin' : 'Member'}</span>
-        </div>
-      )}
-      <button
-        type="button"
-        className="sidebar-item"
-        disabled={logOut.busy}
-        onClick={() => logOut.run(async () => {
-          await signOut()
-          navigate('/login', { replace: true })
-        })}
-      >
-        {logOut.busy ? 'Logging out…' : 'Log out'}
-      </button>
-      {logOut.error && (
-        <p className="sidebar-note" role="alert">
-          {logOut.error}
-        </p>
-      )}
     </nav>
   )
 

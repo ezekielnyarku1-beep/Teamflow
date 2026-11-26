@@ -1,0 +1,92 @@
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: 12px;
+}
+
+.sidebar-top .popover {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-button {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 var(--gap-small);
+  color: var(--tx);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  font-weight: var(--weight-medium);
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-button:hover,
+.account-button[aria-expanded="true"] {
+  background: var(--hover);
+}
+
+.account-button-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-button svg {
+  flex: none;
+  color: var(--mut);
+}
+
+.sidebar-top .icon-button {
+  flex: none;
+  color: var(--mut);
+}
+
+.sidebar-top .icon-button:hover {
+  color: var(--tx);
+}
+
+.account-menu-email {
+  margin: 0;
+  padding: 4px var(--gap) var(--gap-small);
+  overflow: hidden;
+  font-size: var(--text-small);
+  color: var(--mut);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu .picker li.is-divided {
+  margin-top: 9px;
+  position: relative;
+}
+
+.account-menu .picker li.is-divided::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+.account-menu-error {
+  margin: var(--gap-small) var(--gap) 0;
+}
+
+@media (max-width: 768px) {
+  .account-button {
+    min-height: var(--tap-target);
+  }
+
+  .account-menu .picker li {
+    min-height: var(--tap-target);
+  }
+}
