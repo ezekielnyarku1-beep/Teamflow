@@ -6,12 +6,11 @@ import StatusIcon from './StatusIcon.jsx'
 import { formatShortDate } from '../lib/format.js'
 import { priorityLabel, statusLabel } from '../lib/issueOptions.js'
 
-export default function IssueRow({ issue, onOpen, onMenu }) {
+export default function IssueRow({ issue, onMenu }) {
   return (
     <li>
       <IssueLink
         identifier={issue.identifier}
-        onOpen={onOpen}
         onContextMenu={event => onMenu(issue, event)}
         className="issue-row"
         data-issue-row

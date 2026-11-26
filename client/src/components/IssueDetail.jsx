@@ -59,8 +59,7 @@ function NotSaved({ draft, label }) {
   )
 }
 
-function IssueEditor({ issue, headingLevel }) {
-  const Heading = headingLevel === 1 ? 'h1' : 'h2'
+function IssueEditor({ issue }) {
   const updateProperties = useUpdateIssue()
   const updateText = useUpdateIssue()
   const save = changes => updateProperties.mutate({ identifier: issue.identifier, changes })
@@ -70,9 +69,9 @@ function IssueEditor({ issue, headingLevel }) {
 
   return (
     <article className="issue-detail">
-      <Heading className="issue-detail-id">
+      <h1 className="issue-detail-id">
         {issue.identifier} <span className="muted">in {issue.team.name}</span>
-      </Heading>
+      </h1>
       {updateProperties.isError && (
         <p className="inline-error" role="alert">
           The change was not saved: {updateProperties.error.message}
@@ -110,11 +109,11 @@ function IssueEditor({ issue, headingLevel }) {
   )
 }
 
-export default function IssueDetail({ identifier, headingLevel }) {
+export default function IssueDetail({ identifier }) {
   const issue = useIssue(identifier)
   return (
     <QueryState query={issue} label="the issue" skeleton="detail">
-      {data => <IssueEditor key={data.id} issue={data} headingLevel={headingLevel} />}
+      {data => <IssueEditor key={data.id} issue={data} />}
     </QueryState>
   )
 }

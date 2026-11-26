@@ -7,7 +7,7 @@ import StatusPicker from './StatusPicker.jsx'
 import { formatShortDate } from '../lib/format.js'
 import { priorityLabel } from '../lib/issueOptions.js'
 
-export default function BoardCard({ issue, onOpen, onMenu, onStatusChange }) {
+export default function BoardCard({ issue, onMenu, onStatusChange }) {
   const { setNodeRef, listeners, transform, isDragging } = useDraggable({ id: issue.identifier })
   const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` } : undefined
 
@@ -21,7 +21,7 @@ export default function BoardCard({ issue, onOpen, onMenu, onStatusChange }) {
         <PriorityIcon priority={issue.priority} />
         <span className="visually-hidden">{priorityLabel(issue.priority)}</span>
       </div>
-      <IssueLink identifier={issue.identifier} onOpen={onOpen} className="board-card-title">
+      <IssueLink identifier={issue.identifier} className="board-card-title">
         {issue.title}
       </IssueLink>
       <div className="board-card-bottom">

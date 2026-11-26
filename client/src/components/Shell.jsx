@@ -1,16 +1,49 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Outlet, matchPath, useLocation } from 'react-router'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { Navigate, Outlet, matchPath, useLocation, useNavigationType, useSearchParams } from 'react-router'
 import CommandMenu from './CommandMenu.jsx'
 import CreateIssueDialog from './CreateIssueDialog.jsx'
 import Sidebar from './Sidebar.jsx'
 import Toast from './Toast.jsx'
+import { recall, remember } from '../lib/pageMemory.js'
 import { ShellContext } from '../lib/shellContext.js'
 
 const isTypingIn = target =>
   target instanceof Element && target.closest('input, textarea, select, [contenteditable="true"], [role="listbox"], .popover-panel')
 
+function useScrollMemory() {
+  const { key } = useLocation()
+  const navigationType = useNavigationType()
+
+  useEffect(() => {
+    let frame = 0
+    function save() {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => remember('scroll', key, window.scrollY))
+    }
+    window.addEventListener('scroll', save, { passive: true })
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', save)
+    }
+  }, [key])
+
+  useLayoutEffect(() => {
+    const top = navigationType === 'POP' ? recall('scroll', key) ?? 0 : 0
+    let tries = 0
+    let frame = 0
+    function restore() {
+      window.scrollTo({ top, behavior: 'instant' })
+      if (Math.abs(window.scrollY - top) > 1 && tries++ < 60) frame = requestAnimationFrame(restore)
+    }
+    restore()
+    return () => cancelAnimationFrame(frame)
+  }, [key, navigationType])
+}
+
 export default function Shell() {
   const { pathname } = useLocation()
+  const [searchParams] = useSearchParams()
+  const legacyIssue = searchParams.get('issue')
   const [createIssue, setCreateIssue] = useState({ open: false, teamKey: '', cycleId: null })
   const [commandMenuOpen, setCommandMenuOpen] = useState(false)
   const [toast, setToast] = useState(null)
@@ -45,6 +78,10 @@ export default function Shell() {
     document.addEventListener('keydown', handleShortcut)
     return () => document.removeEventListener('keydown', handleShortcut)
   }, [openCreateIssue])
+
+  useScrollMemory()
+
+  if (legacyIssue) return <Navigate to={`/issue/${encodeURIComponent(legacyIssue)}`} replace />
 
   return (
     <ShellContext.Provider value={shell}>

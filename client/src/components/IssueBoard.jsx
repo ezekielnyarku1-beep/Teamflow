@@ -10,7 +10,7 @@ const announcements = {
   onDragCancel: ({ active }) => `Moving ${active.id} was canceled.`,
 }
 
-export default function IssueBoard({ issues, onOpen, onMenu }) {
+export default function IssueBoard({ issues, onMenu }) {
   const updateIssue = useUpdateIssue()
   const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }))
 
@@ -37,7 +37,6 @@ export default function IssueBoard({ issues, onOpen, onMenu }) {
               key={status.value}
               status={status}
               issues={issues.filter(issue => issue.status === status.value)}
-              onOpen={onOpen}
               onMenu={onMenu}
               onStatusChange={changeStatus}
             />

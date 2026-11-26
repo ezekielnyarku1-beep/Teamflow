@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import IssuePanel from '../components/IssuePanel.jsx'
+import IssueLink from '../components/IssueLink.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
 import QueryState from '../components/QueryState.jsx'
 import StatusIcon from '../components/StatusIcon.jsx'
@@ -17,7 +17,6 @@ const priorityOrder = Object.fromEntries(priorities.map((priority, index) => [
 export default function OverviewPage() {
   const [params, setParams] = useSearchParams()
   const teamView = params.get('scope') === 'team'
-  const identifier = params.get('issue')
   const issues = useIssues(teamView ? {} : { assignee: 'me' })
   const projects = useProjects()
   const { openCreateIssue } = useShell()
@@ -33,13 +32,9 @@ export default function OverviewPage() {
     })
   }, [setParams])
 
-  const closePanel = useCallback(() => {
-    setParam('issue', null)
-    document.getElementById('overview-' + identifier)?.focus()
-  }, [identifier, setParam])
 
   return (
-    <div className={identifier ? 'overview has-panel' : 'overview'}>
+    <div className="overview">
       <div className="overview-content">
         <header className="overview-header">
           <h1>Overview</h1>
@@ -68,8 +63,7 @@ export default function OverviewPage() {
                   <ul className="overview-priorities">
                     {sorted.map(issue => (
                       <li key={issue.id}>
-                        <button type="button" id={'overview-' + issue.identifier}
-                          className="overview-issue" onClick={() => setParam('issue', issue.identifier)}>
+                        <IssueLink identifier={issue.identifier} className="overview-issue">
                           <StatusIcon status={issue.status} />
                           <span className="overview-issue-text">
                             <strong>{issue.title}</strong>
@@ -78,7 +72,7 @@ export default function OverviewPage() {
                           <span className={overdue(issue) ? 'overview-due is-overdue' : 'overview-due'}>
                             {overdue(issue) && 'Overdue · '}{issue.dueDate ? formatShortDate(issue.dueDate) : 'No due date'}
                           </span>
-                        </button>
+                        </IssueLink>
                       </li>
                     ))}
                   </ul>
@@ -112,7 +106,6 @@ export default function OverviewPage() {
           </section>
         </div>
       </div>
-      {identifier && <IssuePanel identifier={identifier} onClose={closePanel} />}
     </div>
   )
 }

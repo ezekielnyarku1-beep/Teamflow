@@ -1,13 +1,13 @@
-import { useCallback, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { useCallback, useEffect, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import IssueBoard from './IssueBoard.jsx'
 import IssueContextMenu from './IssueContextMenu.jsx'
 import IssueFilters from './IssueFilters.jsx'
 import IssueList from './IssueList.jsx'
-import IssuePanel from './IssuePanel.jsx'
 import PageHeader from './PageHeader.jsx'
 import QueryState from './QueryState.jsx'
 import { applyFilter, emptyFilter } from '../lib/issueFilter.js'
+import { recall, remember } from '../lib/pageMemory.js'
 import { useDeleteIssue, useIssues, useUpdateIssue } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
 
@@ -18,7 +18,9 @@ const views = [
 
 export default function IssuesView({ title, filters, teamKey, cycleId, summary, initialFilter = emptyFilter, actions }) {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [filter, setFilter] = useState(initialFilter)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [filter, setFilter] = useState(() => recall('filter', location.key) ?? initialFilter)
   const [menu, setMenu] = useState(null)
   const { openCreateIssue, showToast } = useShell()
   const issues = useIssues(filters)
@@ -27,7 +29,6 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
   const menuIssue = menu && issues.data?.find(issue => issue.identifier === menu.identifier)
   const closeMenu = useCallback(() => setMenu(null), [])
   const view = searchParams.get('view') === 'board' ? 'board' : 'list'
-  const openIdentifier = searchParams.get('issue')
 
   const setParam = useCallback((name, value) => {
     setSearchParams(params => {
@@ -38,12 +39,9 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
     })
   }, [setSearchParams])
 
-  const openIssue = identifier => setParam('issue', identifier)
-  const closePanel = useCallback(() => {
-    const row = document.querySelector(`.issues-view a[href="/issue/${CSS.escape(openIdentifier)}"]`)
-    setParam('issue', null)
-    row?.focus()
-  }, [openIdentifier, setParam])
+  useEffect(() => {
+    remember('filter', location.key, filter)
+  }, [location.key, filter])
 
   function openMenu(issue, event) {
     event.preventDefault()
@@ -54,10 +52,8 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
   function changeIssue(changes, message, close) {
     const { identifier } = menuIssue
     if (close) closeMenu()
-    updateIssue.mutateAsync({ identifier, changes }).then(
-      () => showToast(message),
-      error => showToast(`${identifier} was not changed: ${error.message}`),
-    )
+    showToast(message)
+    updateIssue.mutateAsync({ identifier, changes }).catch(error => showToast(`${identifier} was not changed: ${error.message}`))
   }
 
   function copyIssue(kind) {
@@ -71,16 +67,13 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
 
   function openFromMenu(identifier) {
     closeMenu()
-    openIssue(identifier)
+    navigate(`/issue/${identifier}`)
   }
 
   function removeIssue(identifier) {
     closeMenu()
     deleteIssue.mutateAsync(identifier).then(
-      () => {
-        if (openIdentifier === identifier) setParam('issue', null)
-        showToast(`Deleted ${identifier}`)
-      },
+      () => showToast(`Deleted ${identifier}`),
       error => showToast(`${identifier} was not deleted: ${error.message}`),
     )
   }
@@ -91,7 +84,7 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
     : `${visible.length} of ${issues.data.length} issues`)
 
   return (
-    <div className={`issues-view${openIdentifier ? ' has-panel' : ''}`}>
+    <div className="issues-view">
       <div className="issues-view-main">
         <PageHeader title={title} meta={meta}>
           <IssueFilters issues={issues.data ?? []} filter={filter} onChange={setFilter} />
@@ -133,12 +126,11 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
               )
             }
             return view === 'board'
-              ? <IssueBoard issues={visible} onOpen={openIssue} onMenu={openMenu} />
-              : <IssueList issues={visible} onOpen={openIssue} onMenu={openMenu} />
+              ? <IssueBoard issues={visible} onMenu={openMenu} />
+              : <IssueList issues={visible} onMenu={openMenu} />
           }}
         </QueryState>
       </div>
-      {openIdentifier && <IssuePanel identifier={openIdentifier} onClose={closePanel} />}
       {menuIssue && (
         <IssueContextMenu
           key={menuIssue.identifier + menu.x + menu.y}

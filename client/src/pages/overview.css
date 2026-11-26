@@ -4,10 +4,6 @@
   min-height: 100svh;
 }
 
-.overview.has-panel {
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 480px);
-}
-
 .overview-content {
   min-width: 0;
   padding: var(--overview-padding);
@@ -117,10 +113,6 @@
   color: var(--mut);
 }
 
-.overview.has-panel .overview-columns {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 @media (max-width: 1100px) {
   .overview-columns {
     grid-template-columns: minmax(0, 1fr);
@@ -130,10 +122,6 @@
 @media (max-width: 768px) {
   .overview-content {
     padding-inline: 12px;
-  }
-
-  .overview.has-panel {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .overview-header {
