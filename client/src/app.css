@@ -161,16 +161,32 @@
   color: var(--acc);
 }
 
-.priority-icon.is-URGENT {
+.status-icon.is-IN_PROGRESS path {
+  fill: currentColor;
+}
+
+.property-button {
+  gap: var(--gap);
+}
+
+span.priority-icon {
+  display: inline-grid;
+}
+
+.priority-icon > svg {
+  grid-area: 1 / 1;
+}
+
+.priority-icon-track {
+  color: var(--line);
+}
+
+.priority-icon-level {
+  color: var(--tx);
+}
+
+.priority-icon.is-URGENT .priority-icon-level {
   color: var(--danger);
-}
-
-.priority-icon .bar-on {
-  fill: var(--tx);
-}
-
-.priority-icon .bar-off {
-  fill: var(--line);
 }
 
 .avatar {

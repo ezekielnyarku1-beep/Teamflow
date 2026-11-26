@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { ChevronDown } from 'lucide-react'
 import Avatar from './Avatar.jsx'
 import Popover from './Popover.jsx'
+import { iconProps } from '../lib/icons.js'
 import { signOut } from '../lib/auth.js'
 import { useFormAction } from '../lib/useFormAction.js'
 import './accountMenu.css'
@@ -83,9 +85,7 @@ export default function AccountMenu({ me }) {
         <>
           <Avatar name={me.name} />
           <span className="account-button-name">{me.name}</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-            <path d="m3 4.5 3 3 3-3" />
-          </svg>
+          <ChevronDown {...iconProps} />
         </>
       }
     >

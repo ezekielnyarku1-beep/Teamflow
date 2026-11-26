@@ -3,10 +3,7 @@ import './auth.css'
 function Brand() {
   return (
     <div className="hero-brand">
-      <span className="logo-o" aria-hidden="true">O</span>
-      <div>
-        <p className="hero-name">Overview Teams</p>
-      </div>
+      <p className="hero-name">Overview Teams</p>
     </div>
   )
 }

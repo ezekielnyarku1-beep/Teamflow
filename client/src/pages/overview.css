@@ -147,7 +147,7 @@
 
   .overview-due {
     width: 100%;
-    padding-left: 22px;
+    padding-left: calc(16px + var(--gap));
   }
 
   .overview-section-heading a {

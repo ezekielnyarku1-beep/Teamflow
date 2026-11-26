@@ -23,7 +23,7 @@ export default function ProjectsPage() {
           </button>
         )}
       </PageHeader>
-      {creating && <ProjectFormDialog onClose={() => setCreating(false)} />}
+      {creating && <ProjectFormDialog teamKey={teamKey} onClose={() => setCreating(false)} />}
       <QueryState query={projects} label="projects">
         {() =>
           shown.length === 0 ? (

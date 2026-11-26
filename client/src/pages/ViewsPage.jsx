@@ -18,7 +18,7 @@ export default function ViewsPage() {
   return (
     <div className="views-page">
       <PageHeader title="Views" meta={shown && `${shown.length} saved${teamKey ? ` in ${teamKey}` : ''}`}>
-        <SaveViewButton filter={emptyFilter} label="New view" primary />
+        <SaveViewButton teamKey={teamKey ?? ''} filter={emptyFilter} label="New view" primary />
       </PageHeader>
       <QueryState query={views} label="views">
         {() =>

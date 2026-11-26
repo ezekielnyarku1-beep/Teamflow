@@ -1,19 +1,21 @@
 import { useRef, useState, useSyncExternalStore } from 'react'
 import { Link, matchPath, useLocation, useSearchParams } from 'react-router'
+import { ChevronDown, CircleDot, Folder, Inbox, Layers, LayoutGrid, ListChecks, Menu, Search, SquarePen, X } from 'lucide-react'
 import AccountMenu from './AccountMenu.jsx'
 import Dialog from './Dialog.jsx'
 import { prefetchPage, useMe, useNotifications, useTeams, useViews } from '../lib/queries.js'
+import { iconProps } from '../lib/icons.js'
 import { useShell } from '../lib/shellContext.js'
 import { useRememberedList } from '../lib/sidebarMemory.js'
 import './sidebar.css'
 
 const icons = {
-  overview: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
-  inbox: 'M3 13h5l2 3h4l2-3h5 M5.5 5h13L21 13v6H3v-6z',
-  myIssues: 'm3 6 2 2 4-4 M12 6h9 m-18 9 2 2 4-4 M12 15h9',
-  issues: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
-  projects: 'M3 7V4h6l3 3h9v13H3z',
-  views: 'm12 3 9 5-9 5-9-5z m-9 10 9 5 9-5',
+  overview: LayoutGrid,
+  inbox: Inbox,
+  myIssues: ListChecks,
+  issues: CircleDot,
+  projects: Folder,
+  views: Layers,
 }
 
 const mobileNavigation = window.matchMedia('(max-width: 768px)')
@@ -32,28 +34,14 @@ function initials(name) {
   return (words.length > 1 ? words[0][0] + words[1][0] : name.slice(0, 2)).toUpperCase()
 }
 
-function Icon({ path, size = 16 }) {
-  return (
-    <svg className="sidebar-icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d={path} />
-    </svg>
-  )
-}
-
 function Chevron() {
-  return (
-    <svg className="sidebar-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor"
-      strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="m2.5 3.75 2.5 2.5 2.5-2.5" />
-    </svg>
-  )
+  return <ChevronDown {...iconProps} className="sidebar-chevron" />
 }
 
-function SidebarLink({ to, active, icon, children }) {
+function SidebarLink({ to, active, icon: Icon, children }) {
   return (
     <Link to={to} className="sidebar-item" aria-current={active ? 'page' : undefined} onPointerEnter={() => prefetchPage(to)}>
-      {icon && <Icon path={icon} />}
+      {Icon && <Icon {...iconProps} className="sidebar-icon" />}
       {children}
     </Link>
   )
@@ -127,16 +115,10 @@ export default function Sidebar() {
       <div className="sidebar-top">
         {me.data && <AccountMenu me={me.data} />}
         <button type="button" className="icon-button" aria-label="Search" title="Search · Ctrl K" onClick={() => { closeMenu(); openCommandMenu() }}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-            <circle cx="7" cy="7" r="4.5" />
-            <path d="m10.5 10.5 3 3" />
-          </svg>
+          <Search {...iconProps} />
         </button>
         <button type="button" className="icon-button" aria-label="New issue" title="New issue · C" onClick={() => { closeMenu(); openCreateIssue() }}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M9.5 2.5H4a1.5 1.5 0 0 0-1.5 1.5v8A1.5 1.5 0 0 0 4 13.5h8a1.5 1.5 0 0 0 1.5-1.5V6.5" />
-            <path d="m7 9 .5-2L12.5 2l1.5 1.5-5 5z" />
-          </svg>
+          <SquarePen {...iconProps} />
         </button>
       </div>
 
@@ -244,17 +226,13 @@ export default function Sidebar() {
     <div className="mobile-navigation">
       <button type="button" className="icon-button navigation-toggle" aria-label="Open menu"
         aria-haspopup="dialog" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <path d="M4 6h16 M4 12h16 M4 18h16" />
-        </svg>
+        <Menu {...iconProps} size={22} />
       </button>
       {menuOpen && (
         <Dialog label="Main menu" className="navigation-drawer" onClose={closeMenu}>
           <div className="navigation-drawer-content">
             <button ref={closeButton} type="button" className="icon-button navigation-close" aria-label="Close menu" data-autofocus onClick={closeMenu}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                <path d="m6 6 12 12 M6 18 18 6" />
-              </svg>
+              <X {...iconProps} size={22} />
             </button>
             {links}
           </div>

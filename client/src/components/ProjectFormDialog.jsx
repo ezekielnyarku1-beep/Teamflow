@@ -20,10 +20,10 @@ function OwnerSelect({ teamKey, value, onChange }) {
   )
 }
 
-function ProjectForm({ project, teams, onClose }) {
+function ProjectForm({ project, teams, teamKey, onClose }) {
   const save = useSaveProject()
   const [fields, setFields] = useState({
-    teamKey: project?.team.key ?? teams[0].key,
+    teamKey: project?.team.key ?? teams.find(team => team.key === teamKey)?.key ?? teams[0].key,
     name: project?.name ?? '',
     description: project?.description ?? '',
     ownerId: project?.owner?.id ?? '',
@@ -97,14 +97,14 @@ function ProjectForm({ project, teams, onClose }) {
   )
 }
 
-export default function ProjectFormDialog({ project, onClose }) {
+export default function ProjectFormDialog({ project, teamKey, onClose }) {
   const teams = useTeams()
   return (
     <Dialog label={project ? 'Edit project' : 'New project'} className="is-form" onClose={onClose}>
       <QueryState query={teams} label="teams" skeleton="form">
         {data =>
           data.length ? (
-            <ProjectForm project={project} teams={data} onClose={onClose} />
+            <ProjectForm project={project} teamKey={teamKey} teams={data} onClose={onClose} />
           ) : (
             <p className="empty-state">Create a team first in Settings.</p>
           )}

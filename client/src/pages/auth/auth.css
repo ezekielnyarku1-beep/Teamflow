@@ -56,19 +56,6 @@
   margin: 0;
 }
 
-.logo-o {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: .8rem;
-  color: var(--bg);
-  background: var(--acc);
-  font-size: var(--text-auth-title);
-  font-weight: var(--weight-semibold);
-}
-
 .hero-name {
   font-size: var(--text-section-title);
   font-weight: var(--weight-semibold);
@@ -92,7 +79,6 @@
   line-height: 1.1;
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-title);
-  font-family: "Anthropic Serif", "AnthropicSerif", Georgia, "Times New Roman", serif;
 }
 
 .hero-headline em {
@@ -346,11 +332,6 @@
   .auth-box .hero-brand {
     display: flex;
     margin-bottom: 1.5rem;
-  }
-
-  .auth-box .logo-o {
-    color: var(--bg);
-    background: var(--acc);
   }
 
   .auth-sub {

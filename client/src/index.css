@@ -11,7 +11,7 @@
   --google-stroke: light-dark(#747775, #8e918f);
   --google-text: light-dark(#1f1f1f, #e3e3e3);
 
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
   --text-base: 13px;
   --line-base: 1.5;
   --text-small: 12px;
