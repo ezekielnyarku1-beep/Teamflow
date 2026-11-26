@@ -9,69 +9,6 @@
   background: var(--panel);
 }
 
-.sidebar {
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  height: 100vh;
-  padding: 12px var(--gap);
-  overflow-y: auto;
-  border-right: 1px solid var(--line);
-}
-
-.primary-navigation { margin-bottom: 12px; }
-.primary-navigation .sidebar-item { justify-content: flex-start; }
-.primary-navigation svg { flex: none; }
-
-.sidebar-links {
-  display: grid;
-  gap: 2px;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--gap);
-  width: 100%;
-  min-height: var(--row-menu);
-  padding: 0 var(--gap);
-  background: transparent;
-  border: 0;
-  border-radius: var(--radius);
-  font-weight: var(--weight-medium);
-  text-align: left;
-  cursor: pointer;
-}
-
-.sidebar-item:hover,
-.sidebar-item[aria-current="page"] {
-  background: var(--hover);
-}
-
-.sidebar-heading {
-  padding: 12px var(--gap) 4px;
-  font-size: var(--text-small);
-  font-weight: var(--weight-medium);
-  color: var(--mut);
-  letter-spacing: normal;
-}
-
-.sidebar-key {
-  font-size: var(--text-small);
-  font-weight: var(--weight-regular);
-  color: var(--mut);
-}
-
-.sidebar-note {
-  margin: 0;
-  padding: 0 var(--gap);
-  font-size: var(--text-small);
-  color: var(--danger);
-}
-
 .page-header {
   display: flex;
   flex-wrap: wrap;
@@ -1060,25 +997,6 @@
 
 .project-summary-edit {
   margin-top: var(--gap);
-}
-
-.sidebar-badge {
-  min-width: 18px;
-  margin-left: auto;
-  padding: 0 var(--gap-small);
-  border-radius: 9px;
-  background: var(--acc);
-  color: var(--bg);
-  font-size: var(--text-small);
-  font-weight: var(--weight-medium);
-  line-height: 18px;
-  text-align: center;
-}
-
-.sidebar-item-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .simple-row {

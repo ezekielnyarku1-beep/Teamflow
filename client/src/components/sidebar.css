@@ -1,0 +1,219 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 12px var(--gap) 0;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+}
+
+.sidebar-top {
+  flex: none;
+}
+
+.sidebar-scroll {
+  flex: 1;
+  min-height: 0;
+  margin: 0 calc(-1 * var(--gap));
+  padding: 0 var(--gap) 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.sidebar-links {
+  display: grid;
+  gap: 1px;
+}
+
+.sidebar-links[hidden] {
+  display: none;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  width: 100%;
+  min-height: var(--row-menu);
+  padding: 0 var(--gap);
+  color: var(--tx);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar-item:hover,
+.sidebar-item[aria-current="page"] {
+  background: var(--hover);
+}
+
+.sidebar-icon {
+  flex: none;
+  color: var(--mut);
+}
+
+.sidebar-item[aria-current="page"] .sidebar-icon {
+  color: var(--tx);
+}
+
+.sidebar-item-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-section {
+  margin-top: 12px;
+}
+
+.sidebar-heading {
+  margin: 0 0 2px;
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  color: var(--mut);
+  letter-spacing: normal;
+}
+
+.sidebar-heading-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 0 var(--gap);
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  font: inherit;
+  cursor: pointer;
+}
+
+.sidebar-heading-button:hover {
+  color: var(--tx);
+}
+
+.sidebar-chevron {
+  flex: none;
+  color: var(--mut);
+  opacity: 0;
+}
+
+.sidebar-heading-button:hover .sidebar-chevron,
+.sidebar-heading-button:focus-visible .sidebar-chevron,
+.sidebar-team:hover .sidebar-chevron,
+.sidebar-team:focus-visible .sidebar-chevron {
+  opacity: 1;
+}
+
+[aria-expanded="false"] > .sidebar-chevron {
+  transform: rotate(-90deg);
+}
+
+.sidebar-team-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: var(--bg);
+  background: var(--acc);
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+.sidebar-team-links {
+  margin-top: 1px;
+  padding-left: 18px;
+}
+
+.sidebar-badge {
+  min-width: 18px;
+  margin-left: auto;
+  padding: 0 var(--gap-small);
+  border-radius: 9px;
+  background: var(--acc);
+  color: var(--bg);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  line-height: 18px;
+  text-align: center;
+}
+
+.sidebar-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-left: auto;
+  background: var(--acc);
+  border-radius: 50%;
+}
+
+.sidebar-note {
+  margin: 0;
+  padding: 2px var(--gap);
+  font-size: var(--text-small);
+  color: var(--mut);
+}
+
+.sidebar-note.is-error {
+  color: var(--danger);
+}
+
+@media (hover: none) {
+  .sidebar-chevron {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .navigation-drawer-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-bottom: 0;
+  }
+
+  .navigation-close {
+    align-self: flex-start;
+  }
+
+  .navigation-drawer-links {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .navigation-drawer-links .sidebar-scroll {
+    margin: 0 -12px;
+    padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .navigation-drawer-links .sidebar-heading-button {
+    min-height: var(--tap-target);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sidebar-chevron {
+    transition:
+      opacity var(--motion-fast) ease-out,
+      transform var(--motion) var(--ease-out);
+  }
+
+  .sidebar-heading-button {
+    transition: color var(--motion-fast) ease-out;
+  }
+}
