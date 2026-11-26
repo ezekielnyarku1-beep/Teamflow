@@ -72,6 +72,10 @@ export function signInWithGoogle(redirectTo) {
   )
 }
 
+const unverifiedEmailCodes = ['EMAIL_NOT_VERIFIED', 'email_not_confirmed']
+
+export const isUnverifiedEmail = error => unverifiedEmailCodes.includes(error.code)
+
 export function markPendingVerification(email) {
   try {
     window.sessionStorage.setItem(pendingKey, email.trim().toLowerCase())

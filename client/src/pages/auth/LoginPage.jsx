@@ -6,7 +6,7 @@ import GoogleButton from '../../components/GoogleButton.jsx'
 import PasswordField from '../../components/PasswordField.jsx'
 import SubmitButton from '../../components/SubmitButton.jsx'
 import TextField from '../../components/TextField.jsx'
-import { markPendingVerification, signIn, verifyEmailPath } from '../../lib/auth.js'
+import { isUnverifiedEmail, markPendingVerification, signIn, verifyEmailPath } from '../../lib/auth.js'
 import { isEmail } from '../../lib/authValidation.js'
 import { useFormAction } from '../../lib/useFormAction.js'
 import { useGoogleError } from '../../lib/useGoogleError.js'
@@ -28,7 +28,7 @@ export default function LoginPage({ onGoogle }) {
       try {
         await signIn(email.trim(), password)
       } catch (error) {
-        if (error.code !== 'EMAIL_NOT_VERIFIED') throw error
+        if (!isUnverifiedEmail(error)) throw error
         markPendingVerification(email)
         navigate(verifyEmailPath(email.trim()))
       }
