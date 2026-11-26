@@ -17,7 +17,18 @@ const codeProblems = [
   ['TOO_MANY_ATTEMPTS', 'Too many attempts', 'Too many wrong codes. Send a new one.'],
 ]
 const codeMessage = error => codeProblems.find(([code, text]) => error.code === code || error.message === text)?.[2]
-const messageFor = (error, fallback) => (error.status === 429 ? tooManyAttempts : codeMessage(error) ?? fallback)
+// Neon Auth only accepts sign-ins from its trusted domains. Vercel's per-deployment addresses are not on that list,
+// and the refusal can also surface as a failed request, so say plainly which address was used.
+const untrustedAddress = () =>
+  `Signing in is not allowed from this address (${window.location.origin}). Open the app from its main address, or add this one to the Neon Auth trusted domains.`
+const unreachable = () =>
+  `Could not reach the sign-in service from ${window.location.origin}. Check your connection. If it keeps happening, this address may need adding to the Neon Auth trusted domains.`
+const isNetworkFailure = error => error instanceof TypeError || error?.status === 0
+function messageFor(error, fallback) {
+  if (error?.code === 'INVALID_ORIGIN') return untrustedAddress()
+  if (isNetworkFailure(error)) return unreachable()
+  return error?.status === 429 ? tooManyAttempts : codeMessage(error ?? {}) ?? fallback
+}
 const pendingKey = 'overview-teams-verify-email'
 
 let cachedToken = null

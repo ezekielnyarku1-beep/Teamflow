@@ -1,11 +1,11 @@
 :root {
-  --bg: light-dark(#f6f7f9, #101217);
-  --panel: light-dark(#ffffff, #171a21);
-  --line: light-dark(#e3e6ec, #252a34);
-  --tx: light-dark(#1b1f27, #e8eaee);
-  --mut: light-dark(#5c6575, #a0a8b7);
+  --bg: light-dark(#f6f6f7, #080809);
+  --panel: light-dark(#ffffff, #101012);
+  --line: light-dark(#dedee3, #26262a);
+  --tx: light-dark(#19191d, #ededf0);
+  --mut: light-dark(#575762, #a5a5af);
   --acc: var(--tx);
-  --hover: light-dark(#e7ebf0, #292f39);
+  --hover: light-dark(#eeeef1, #212125);
   --danger: light-dark(#c2362b, #ff7b72);
   --priority-high: light-dark(#a8480d, #ffa464);
   --priority-medium: light-dark(#876000, #edc457);
