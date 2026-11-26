@@ -13,6 +13,8 @@
   --status-todo: light-dark(#7255a0, #b8a2e2);
   --status-active: light-dark(#2862ad, #84b9ff);
   --status-done: light-dark(#257447, #75ce94);
+  --progress-done: light-dark(#08603b, #13a167);
+  --progress-active: light-dark(#184da4, #4788ed);
   --google-fill: light-dark(#ffffff, #131314);
   --google-stroke: light-dark(#747775, #8e918f);
   --google-text: light-dark(#1f1f1f, #e3e3e3);

@@ -698,15 +698,15 @@ span.priority-icon {
 }
 
 .progress-done {
-  background: var(--status-done);
+  background: var(--progress-done);
 }
 
 .progress-active {
-  background: var(--status-active);
+  background: var(--progress-active);
 }
 
-.progress-text-done { color: var(--status-done); }
-.progress-text-active { color: var(--status-active); }
+.progress-text-done { color: var(--progress-done); }
+.progress-text-active { color: var(--progress-active); }
 
 .progress-text {
   font-size: var(--text-small);
