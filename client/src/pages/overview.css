@@ -177,3 +177,10 @@
     transition: background-color var(--motion-fast) ease-out;
   }
 }
+
+@media (max-width: 768px) {
+  /* "No due date" on its own line under every issue only adds height on phones. */
+  .overview-due.is-empty {
+    display: none;
+  }
+}

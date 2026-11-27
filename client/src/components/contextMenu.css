@@ -69,6 +69,11 @@
     min-height: var(--tap-target);
   }
 
+  /* Taller on phones so every action, including Delete, fits without scrolling. */
+  .context-menu {
+    max-height: min(480px, calc(100dvh - var(--space-4)));
+  }
+
   .context-menu-search {
     min-height: var(--tap-target);
     font-size: var(--text-input-phone);

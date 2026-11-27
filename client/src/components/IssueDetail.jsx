@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import IssueActivity from './IssueActivity.jsx'
 import IssueComments from './IssueComments.jsx'
 import IssueProperties from './IssueProperties.jsx'
@@ -44,6 +44,44 @@ function useDraft(savedValue, normalize, toChanges, saveAsync) {
   }
 }
 
+// A one-line title box that wraps and grows, so long titles stay readable on phones instead of being cut off.
+// Enter still saves (by leaving the field) and line breaks are never added to the title.
+function TitleField({ id, field }) {
+  const ref = useRef(null)
+
+  useLayoutEffect(() => {
+    const box = ref.current
+    const fit = () => {
+      box.style.height = 'auto'
+      box.style.height = `${box.scrollHeight}px`
+    }
+    fit()
+    window.addEventListener('resize', fit)
+    return () => window.removeEventListener('resize', fit)
+  }, [field.value])
+
+  return (
+    <textarea
+      ref={ref}
+      id={id}
+      className="issue-title-input"
+      rows={1}
+      maxLength={200}
+      {...field}
+      onChange={event => {
+        event.target.value = event.target.value.replace(/[\r\n]+/g, ' ')
+        field.onChange(event)
+      }}
+      onKeyDown={event => {
+        if (event.key === 'Enter') {
+          event.preventDefault()
+          event.currentTarget.blur()
+        }
+      }}
+    />
+  )
+}
+
 function NotSaved({ draft, label }) {
   if (!draft.failed) return null
   return (
@@ -80,15 +118,7 @@ function IssueEditor({ issue }) {
       <label htmlFor={`title-${issue.id}`} className="visually-hidden">
         Title
       </label>
-      <input
-        id={`title-${issue.id}`}
-        className="issue-title-input"
-        maxLength={200}
-        {...title.field}
-        onKeyDown={event => {
-          if (event.key === 'Enter') event.currentTarget.blur()
-        }}
-      />
+      <TitleField id={`title-${issue.id}`} field={title.field} />
       <NotSaved draft={title} label="title" />
       <label htmlFor={`description-${issue.id}`} className="visually-hidden">
         Description

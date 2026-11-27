@@ -225,3 +225,8 @@
     transition: color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out;
   }
 }
+
+/* Team expand arrows line up on the right instead of following each name. */
+.sidebar-team .sidebar-chevron {
+  margin-left: auto;
+}

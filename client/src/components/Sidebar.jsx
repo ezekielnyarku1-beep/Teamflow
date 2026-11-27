@@ -228,6 +228,14 @@ export default function Sidebar() {
         aria-haspopup="dialog" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
         <Menu {...iconProps} size={22} />
       </button>
+      <div className="mobile-navigation-actions">
+        <button type="button" className="icon-button" aria-label="Search" onClick={openCommandMenu}>
+          <Search {...iconProps} size={20} />
+        </button>
+        <button type="button" className="icon-button" aria-label="New issue" onClick={() => openCreateIssue()}>
+          <SquarePen {...iconProps} size={20} />
+        </button>
+      </div>
       {menuOpen && (
         <Dialog label="Main menu" className="navigation-drawer" onClose={closeMenu}>
           <div className="navigation-drawer-content">
