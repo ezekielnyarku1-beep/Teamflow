@@ -343,7 +343,9 @@
   }
 
   .auth .field-top a,
-  .auth-foot a {
+  .auth-foot a,
+  .auth-foot .link-button,
+  .auth-resend .link-button {
     display: inline-flex;
     align-items: center;
     min-height: 44px;

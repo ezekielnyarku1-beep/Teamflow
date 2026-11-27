@@ -234,6 +234,9 @@ span.priority-icon {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   min-height: 100vh;
+  /* The board scrolls sideways inside itself. Without this, its columns still widened the page on phones, which
+     then showed the board zoomed out. Menus open in the top layer, so nothing that should show is cut off. */
+  overflow-x: clip;
 }
 
 .issues-view-main {

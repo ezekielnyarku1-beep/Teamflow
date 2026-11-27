@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router'
 import PageHeader from '../components/PageHeader.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
 import QueryState from '../components/QueryState.jsx'
-import { formatDateRange } from '../lib/format.js'
+import { formatDateRange, countOf } from '../lib/format.js'
 import { useCycles, useTeam } from '../lib/queries.js'
 
 const stateLabels = { current: 'Current', upcoming: 'Upcoming', past: 'Finished' }
@@ -16,7 +16,7 @@ export default function TeamCyclesPage() {
     <QueryState query={team} label="the team" skeleton="page">
       {teamData => (
         <div className="cycles-page">
-          <PageHeader title={`${teamData.name} cycles`} meta={cycles.data && `${cycles.data.length} cycles`}>
+          <PageHeader title={`${teamData.name} cycles`} meta={cycles.data && countOf(cycles.data.length, 'cycle')}>
             <Link to={`/team/${teamKey}`} className="button">
               Team issues
             </Link>

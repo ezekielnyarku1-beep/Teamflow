@@ -6,6 +6,7 @@ import IssueFilters from './IssueFilters.jsx'
 import IssueList from './IssueList.jsx'
 import PageHeader from './PageHeader.jsx'
 import QueryState from './QueryState.jsx'
+import { countOf } from '../lib/format.js'
 import { applyFilter, emptyFilter } from '../lib/issueFilter.js'
 import { recall, remember } from '../lib/pageMemory.js'
 import { useDeleteIssue, useIssues, useUpdateIssue } from '../lib/queries.js'
@@ -80,8 +81,8 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
 
   const visible = issues.data ? applyFilter(issues.data, filter) : []
   const meta = issues.data && (visible.length === issues.data.length
-    ? `${issues.data.length} issues`
-    : `${visible.length} of ${issues.data.length} issues`)
+    ? countOf(issues.data.length, 'issue')
+    : `${visible.length} of ${countOf(issues.data.length, 'issue')}`)
 
   return (
     <div className="issues-view">

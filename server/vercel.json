@@ -1,7 +1,17 @@
 {
   "framework": null,
+  "regions": [
+    "lhr1"
+  ],
   "functions": {
-    "api/index.js": { "includeFiles": "src/generated/**" }
+    "api/index.js": {
+      "includeFiles": "src/generated/**"
+    }
   },
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api"
+    }
+  ]
 }

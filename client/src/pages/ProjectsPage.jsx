@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
 import ProjectFormDialog from '../components/ProjectFormDialog.jsx'
 import QueryState from '../components/QueryState.jsx'
-import { formatDateWithYear } from '../lib/format.js'
+import { formatDateWithYear, countOf } from '../lib/format.js'
 import { useIsAdmin, useProjects } from '../lib/queries.js'
 
 export default function ProjectsPage() {
@@ -16,7 +16,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="projects-page">
-      <PageHeader title="Projects" meta={shown && `${shown.length} projects${teamKey ? ` in ${teamKey}` : ''}`}>
+      <PageHeader title="Projects" meta={shown && `${countOf(shown.length, 'project')}${teamKey ? ` in ${teamKey}` : ''}`}>
         {isAdmin && (
           <button type="button" className="button is-primary" onClick={() => setCreating(true)}>
             New project

@@ -8,3 +8,6 @@ export const formatShortDate = value => shortDate.format(fromDateString(value))
 export const formatDateWithYear = value => dateWithYear.format(fromDateString(value))
 export const formatDateTime = value => dateTime.format(new Date(value))
 export const formatDateRange = (start, end) => `${formatShortDate(start)} – ${formatShortDate(end)}`
+
+// "1 issue", "3 issues"
+export const countOf = (count, word) => `${count} ${count === 1 ? word : `${word}s`}`

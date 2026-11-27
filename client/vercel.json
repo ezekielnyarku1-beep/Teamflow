@@ -1,6 +1,15 @@
 {
+  "regions": [
+    "lhr1"
+  ],
   "rewrites": [
-    { "source": "/api/neon-auth/:path*", "destination": "/api/neon-auth?__neon_auth_path=:path*" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/api/neon-auth/:path*",
+      "destination": "/api/neon-auth?__neon_auth_path=:path*"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }
