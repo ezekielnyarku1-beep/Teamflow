@@ -1,3 +1,6 @@
+import FieldPicker from './FieldPicker.jsx'
+import EmptyState from './EmptyState.jsx'
+import { People } from './EmptyPictures.jsx'
 import { useState } from 'react'
 import Avatar from './Avatar.jsx'
 import QueryState from './QueryState.jsx'
@@ -41,10 +44,10 @@ function CycleSettings({ team, updateTeam }) {
     >
       <label className="settings-field">
         Cycle length
-        <select className="input" value={weeks} onChange={event => setWeeks(event.target.value)}>
+        <FieldPicker label="Cycle length" className="input" value={weeks} onChange={event => setWeeks(event.target.value)}>
           <option value="1">1 week</option>
           <option value="2">2 weeks</option>
-        </select>
+        </FieldPicker>
       </label>
       <label className="settings-field">
         First cycle starts
@@ -98,7 +101,7 @@ export default function TeamSettingsCard({ team, users }) {
             return (
               <>
                 <ul className="settings-list">
-                  {data.members.length === 0 && <li className="settings-row muted">No members yet.</li>}
+                  {data.members.length === 0 && <li><EmptyState illustration={People} title="No members yet" description="People added to this team appear here." compact /></li>}
                   {data.members.map(member => (
                     <li key={member.id} className="settings-row">
                       <Avatar name={member.name} />
@@ -126,14 +129,14 @@ export default function TeamSettingsCard({ team, users }) {
                     <label htmlFor={`add-member-${team.key}`} className="visually-hidden">
                       Person to add to {team.name}
                     </label>
-                    <select id={`add-member-${team.key}`} className="input" value={newMemberId} onChange={event => setNewMemberId(event.target.value)}>
+                    <FieldPicker label="Person to add" id={`add-member-${team.key}`} className="input" value={newMemberId} onChange={event => setNewMemberId(event.target.value)}>
                       <option value="">Choose a person…</option>
                       {others.map(user => (
                         <option key={user.id} value={user.id}>
                           {user.name}
                         </option>
                       ))}
-                    </select>
+                    </FieldPicker>
                     <button type="submit" className="button" disabled={!newMemberId || addMember.isPending}>
                       Add to team
                     </button>

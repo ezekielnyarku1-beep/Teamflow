@@ -10,6 +10,7 @@ import ResetPasswordPage from './pages/auth/ResetPasswordPage.jsx'
 import VerifyEmailPage from './pages/auth/VerifyEmailPage.jsx'
 import SignUpPage from './pages/auth/SignUpPage.jsx'
 import CyclePage from './pages/CyclePage.jsx'
+import AgentsPage from './pages/AgentsPage.jsx'
 import InboxPage from './pages/InboxPage.jsx'
 import IssuePage from './pages/IssuePage.jsx'
 import MyIssuesPage from './pages/MyIssuesPage.jsx'
@@ -42,6 +43,7 @@ export default function App() {
         <Route element={<Shell />}>
           <Route index element={<Navigate to="/overview" replace />} />
           <Route path="overview" element={<OverviewPage />} />
+          <Route path="agents" element={<AgentsPage />} />
           <Route path="my-issues" element={<MyIssuesPage />} />
           <Route path="inbox" element={<InboxPage />} />
           <Route path="team/:teamKey" element={<TeamIssuesPage />} />

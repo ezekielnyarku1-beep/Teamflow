@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { generateJson, answerText } from '../assistant.js'
 import { prisma } from '../db.js'
 import { findVisibleTeam, requireAdmin, visibleTeamsWhere } from '../access.js'
 import { HttpError } from '../errors.js'
@@ -59,6 +60,28 @@ projectsRouter.get('/:id', async (request, response) => {
   const project = await findVisibleProject(request.user, request.params.id)
   const [serialized] = await serializeWithProgress([project])
   response.json(serialized)
+})
+
+projectsRouter.post('/:id/blockers', async (request, response) => {
+  const project = await findVisibleProject(request.user, request.params.id)
+  const issues = await prisma.issue.findMany({
+    where: { projectId: project.id, teamId: project.teamId, status: { notIn: ['DONE', 'CANCELED'] } },
+    orderBy: { updatedAt: 'desc' }, take: 40,
+    select: { number: true, title: true, description: true,
+      comments: { orderBy: { createdAt: 'desc' }, take: 4, select: { body: true } } },
+  })
+  const sources = issues.map(issue => ({
+    identifier: `${project.team.key}-${issue.number}`, title: issue.title,
+    description: issue.description.slice(0, 600), comments: issue.comments.map(c => c.body.slice(0, 350)),
+  }))
+  if (!sources.length) return response.json({ text: 'This project has no open issues.' })
+  const result = await generateJson('Read each open issue. If the issue says work is blocked, waiting on approval, or cannot proceed until a dependency is met, include that issue unless a later comment resolves it. Copy its identifier exactly and describe the stated dependency. Priority or a deadline alone is insufficient. Example: an issue ABC-7 saying "waiting for design approval" gives {"blockers":[{"identifier":"ABC-7","reason":"Waiting for design approval."}]}. For no documented blockers return {"blockers":[]}.', sources)
+  if (!Array.isArray(result?.blockers)) throw new HttpError(502, 'The AI returned an incomplete answer. Try again.')
+  const blockers = result.blockers.map(item => {
+    if (!sources.some(s => s.identifier === item?.identifier)) throw new HttpError(502, 'The AI returned an unknown issue. Try again.')
+    return { identifier: item.identifier, reason: answerText(item.reason) }
+  })
+  response.json({ text: blockers.length ? '' : 'No blocker was documented in the reviewed issue excerpts.', blockers })
 })
 
 projectsRouter.post('/', requireAdmin, async (request, response) => {

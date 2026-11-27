@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { generateJson, answerText } from '../assistant.js'
 import { prisma } from '../db.js'
 import { findVisibleIssue, findVisibleTeam, isAdmin, teamKeyOf, visibleTeamsWhere } from '../access.js'
 import { syncCycles } from '../cycles.js'
@@ -29,6 +30,28 @@ export const issuesRouter = Router()
 
 const statuses = Object.values(IssueStatus)
 const priorities = Object.values(IssuePriority)
+
+issuesRouter.post('/draft', async (request, response) => {
+  const body = readBody(request)
+  await findVisibleTeam(request.user, readTeamKey(body.teamKey))
+  const sentence = readText(body.sentence, 'Idea', { max: 200 })
+  const draft = await generateJson('Draft a concise actionable issue using only the supplied facts. Return {title,description,priority}. Choose priority from the supplied list. Use NO_PRIORITY when urgency is unclear.', { sentence, priorities })
+  response.json({
+    title: answerText(draft?.title, 200),
+    description: answerText(draft?.description),
+    priority: priorities.includes(draft?.priority) ? draft.priority : 'NO_PRIORITY',
+  })
+})
+
+issuesRouter.post('/:identifier/summary', async (request, response) => {
+  const issue = await findVisibleIssue(request.user, request.params.identifier, {
+    comments: { select: { body: true }, orderBy: { createdAt: 'desc' }, take: 30 },
+  })
+  if (!issue.comments.length) return response.json({ text: 'No comments yet.' })
+  const comments = issue.comments.reverse().map(comment => comment.body.slice(0, 1200))
+  const result = await generateJson('Summarize decisions, open questions and next steps supported by the comments. Return {text}.', comments)
+  response.json({ text: answerText(result?.text) })
+})
 
 function readIssueFields(body, { creating }) {
   const fields = {}

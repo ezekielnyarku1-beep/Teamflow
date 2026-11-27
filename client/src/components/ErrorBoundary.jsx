@@ -1,3 +1,5 @@
+import EmptyState from './EmptyState.jsx'
+import { Cloud } from './EmptyPictures.jsx'
 import { Component } from 'react'
 
 // Catches a crash while rendering so one broken page does not blank the whole app. When `resetKey` changes (the
@@ -20,13 +22,11 @@ export default class ErrorBoundary extends Component {
   render() {
     if (!this.state.failed) return this.props.children
     return (
-      <div className="message-page" role="alert">
-        <h1>Something went wrong</h1>
-        <p className="muted">This page hit an unexpected error. Reload to try again.</p>
+      <EmptyState illustration={Cloud} title="Something went wrong" description="Reload the page to try again." role="alert" heading="h1">
         <button type="button" className="button" onClick={() => window.location.reload()}>
           Reload
         </button>
-      </div>
+      </EmptyState>
     )
   }
 }

@@ -470,15 +470,56 @@ span.priority-icon {
 
 .issue-properties dd {
   margin: 0;
+  min-width: 0;
+  width: min(100%, 16rem);
+}
+
+.issue-properties .popover,
+.issue-properties .input,
+.issue-properties .property-button {
+  width: 100%;
 }
 
 .issue-properties .property-button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: var(--control-height);
+  height: auto;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--tx);
   text-align: left;
-  margin-left: calc(-1 * var(--space-3));
+  overflow-wrap: anywhere;
 }
 
-.issue-properties .input {
-  width: auto;
+.issue-properties .property-button::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: none;
+  margin-inline-start: auto;
+  border: solid var(--mut);
+  border-width: 0 1.5px 1.5px 0;
+  transform: translateY(-2px) rotate(45deg);
+}
+
+.issue-properties .property-button[aria-expanded="true"]::after {
+  transform: translateY(2px) rotate(225deg);
+}
+
+.issue-properties .property-button:is(:focus-visible, [aria-expanded="true"]) {
+  border-color: var(--mut);
+  background: var(--hover);
+}
+
+.issue-properties .label-list { flex-wrap: wrap; min-width: 0; }
+.issue-properties .label-chip { max-width: 100%; white-space: normal; }
+
+@media (max-width: 768px) {
+  .issue-properties .property-button { min-height: var(--tap-target); }
 }
 
 .issue-section h3 {
@@ -1390,3 +1431,8 @@ html:has(.navigation-drawer[open]) { overflow: hidden; }
     align-items: start;
   }
 }
+
+.field-picker { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); max-width: 100%; cursor: pointer; text-align: start; }
+.field-picker > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.field-picker > svg { flex: none; }
+.popover:has(> .field-picker) { min-width: 0; max-width: 100%; }

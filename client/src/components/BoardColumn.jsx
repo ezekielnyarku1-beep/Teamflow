@@ -1,3 +1,5 @@
+import EmptyState from './EmptyState.jsx'
+import { Card } from './EmptyPictures.jsx'
 import { useDroppable } from '@dnd-kit/core'
 import BoardCard from './BoardCard.jsx'
 import StatusIcon from './StatusIcon.jsx'
@@ -12,6 +14,7 @@ export default function BoardColumn({ status, issues, onMenu, onStatusChange }) 
         {status.label}
         <span className="muted">{issues.length}</span>
       </h2>
+      {issues.length === 0 && <EmptyState illustration={Card} title="No issues" description="Issues with this status appear here." compact />}
       <ul className="board-cards">
         {issues.map(issue => (
           <BoardCard key={issue.id} issue={issue} onMenu={onMenu} onStatusChange={onStatusChange} />

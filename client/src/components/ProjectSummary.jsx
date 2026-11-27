@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import ProgressBar from './ProgressBar.jsx'
+import AssistantAnswer from './AssistantAnswer.jsx'
+import { reviewBlockers } from '../lib/api.js'
 import ProjectFormDialog from './ProjectFormDialog.jsx'
 import { formatDateWithYear } from '../lib/format.js'
 import { useIsAdmin } from '../lib/queries.js'
@@ -25,6 +27,9 @@ export default function ProjectSummary({ project }) {
           <ProgressBar progress={project.progress} />
         </dd>
       </dl>
+      <AssistantAnswer key={project.id} label="What’s blocking this project?"
+        scope="AI review of up to 40 recently updated open issues and their recent comments."
+        load={() => reviewBlockers(project.id)} />
       {isAdmin && (
         <button type="button" className="button project-summary-edit" onClick={() => setEditing(true)}>
           Edit project

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Settings, UserPlus } from 'lucide-react'
 import Avatar from './Avatar.jsx'
 import Popover from './Popover.jsx'
 import { iconProps } from '../lib/icons.js'
@@ -63,6 +63,8 @@ function AccountMenuList({ me, onClose }) {
             onPointerMove={() => setActive(index)}
             onClick={() => choose(item)}
           >
+            {item.key === 'settings' && <Settings {...iconProps} />}
+            {item.key === 'members' && <UserPlus {...iconProps} />}
             <span className="picker-label">{item.label}</span>
           </li>
         ))}

@@ -1,3 +1,5 @@
+import EmptyState from '../components/EmptyState.jsx'
+import { Inbox } from '../components/EmptyPictures.jsx'
 import { Link } from 'react-router'
 import Avatar from '../components/Avatar.jsx'
 import PageHeader from '../components/PageHeader.jsx'
@@ -32,7 +34,7 @@ export default function InboxPage() {
       <QueryState query={notifications} label="your inbox">
         {data =>
           data.notifications.length === 0 ? (
-            <p className="empty-state">Nothing here yet. You hear about issues assigned to you, status changes on them, and comments on issues you are assigned to or have commented on.</p>
+            <EmptyState illustration={Inbox} title="Nothing here yet" description="Assignments, status changes, and comments on your issues appear here." />
           ) : (
             <ul className="inbox-list">
               {data.notifications.map(notification => (

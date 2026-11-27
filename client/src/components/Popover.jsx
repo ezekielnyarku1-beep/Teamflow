@@ -1,6 +1,6 @@
 import { useId, useLayoutEffect, useRef, useState } from 'react'
 
-export default function Popover({ label, buttonContent, buttonClassName = 'button', children }) {
+export default function Popover({ label, buttonContent, buttonClassName = 'button', triggerProps, children }) {
   const [open, setOpen] = useState(false)
   const buttonRef = useRef(null)
   const panelRef = useRef(null)
@@ -44,7 +44,7 @@ export default function Popover({ label, buttonContent, buttonClassName = 'butto
 
   function close() {
     setOpen(false)
-    document.getElementById(buttonId)?.focus()
+    document.getElementById(triggerProps?.id ?? buttonId)?.focus()
   }
 
   function closeOnEscape(event) {
@@ -60,6 +60,7 @@ export default function Popover({ label, buttonContent, buttonClassName = 'butto
         type="button"
         ref={buttonRef}
         id={buttonId}
+        {...triggerProps}
         className={buttonClassName}
         aria-label={label}
         aria-expanded={open}

@@ -1,3 +1,5 @@
+import EmptyState from './EmptyState.jsx'
+import { Search } from './EmptyPictures.jsx'
 import { useEffect, useId, useState } from 'react'
 import { useNavigate } from 'react-router'
 import Dialog from './Dialog.jsx'
@@ -106,7 +108,7 @@ export default function CommandMenu({ onClose }) {
           </button>
         </p>
       )}
-      {!matches.length && !isLoading && <p className="command-note">Nothing matches “{text}”.</p>}
+      {!matches.length && !isLoading && <EmptyState illustration={Search} title="No search results" description="Try a different name or issue identifier." compact />}
     </Dialog>
   )
 }

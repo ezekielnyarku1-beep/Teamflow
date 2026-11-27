@@ -1,3 +1,5 @@
+import EmptyState from '../components/EmptyState.jsx'
+import { Checklist, Folder } from '../components/EmptyPictures.jsx'
 import { useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import IssueLink from '../components/IssueLink.jsx'
@@ -10,6 +12,8 @@ import { formatShortDate } from '../lib/format.js'
 import { useIssues, useProjects } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
 import './overview.css'
+
+const shownPriorities = 5
 
 const priorityOrder = Object.fromEntries(priorities.map((priority, index) => [
   priority.value, index === 0 ? priorities.length : index,
@@ -59,8 +63,10 @@ export default function OverviewPage() {
                   || priorityOrder[a.priority] - priorityOrder[b.priority]
                   || (a.dueDate ?? '9999').localeCompare(b.dueDate ?? '9999')
                   || a.identifier.localeCompare(b.identifier),
-                ).slice(0, 5)
+                ).slice(0, shownPriorities)
+                const hidden = open.length - sorted.length
                 return sorted.length ? (
+                  <>
                   <ul className="overview-priorities">
                     {sorted.map(issue => (
                       <li key={issue.id}>
@@ -75,14 +81,27 @@ export default function OverviewPage() {
                               {' · '}{issue.identifier} · {statusLabel(issue.status)}{issue.project ? ' · ' + issue.project.name : ''}
                             </span>
                           </span>
-                          <span className={overdue(issue) ? 'overview-due is-overdue' : 'overview-due'}>
+                          <span className={overdue(issue) ? 'overview-due is-overdue' : issue.dueDate ? 'overview-due' : 'overview-due is-empty'}>
                             {overdue(issue) && 'Overdue · '}{issue.dueDate ? formatShortDate(issue.dueDate) : 'No due date'}
                           </span>
                         </IssueLink>
                       </li>
                     ))}
                   </ul>
-                ) : <p className="overview-empty">{teamView ? 'No open issues across your teams.' : 'You have no open assigned issues.'}</p>
+                  {hidden > 0 && (
+                    <p className="overview-more">
+                      {teamView
+                        ? `Showing the top ${sorted.length} of ${open.length} open issues.`
+                        : <Link to="/my-issues">{`View ${hidden} more open ${hidden === 1 ? 'issue' : 'issues'}`}</Link>}
+                    </p>
+                  )}
+                  </>
+                ) : (
+                  <EmptyState illustration={Checklist} title="No open priorities" description={teamView ? 'No open issues across your teams.' : 'You have no open assigned issues.'}>
+                    <button type="button" className="button is-primary" onClick={() => openCreateIssue()}>New issue</button>
+                    {!teamView && <button type="button" className="button" onClick={() => setParam('scope', 'team')}>See team priorities</button>}
+                  </EmptyState>
+                )
               }}
             </QueryState>
           </section>
@@ -93,7 +112,9 @@ export default function OverviewPage() {
             </div>
             <QueryState query={projects} label="projects" skeleton="short">
               {data => {
-                const active = data.filter(project => project.progress.activeCount > project.progress.doneCount)
+                // Every project with work left, including new ones with no issues yet (the bar says "No issues yet").
+                // Only finished projects, where every issue is done or canceled, are left out.
+                const active = data.filter(({ progress }) => progress.issueCount === 0 || progress.doneCount < progress.activeCount)
                 return active.length ? (
                   <ul className="overview-projects">
                     {active.map(project => (
@@ -106,7 +127,7 @@ export default function OverviewPage() {
                       </li>
                     ))}
                   </ul>
-                ) : <p className="overview-empty">No active projects. <Link to="/projects">Browse projects</Link></p>
+                ) : <EmptyState illustration={Folder} title="No active projects" description="Projects with work left show their progress here."><Link className="button" to="/projects">Browse projects</Link></EmptyState>
               }}
             </QueryState>
           </section>

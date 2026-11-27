@@ -45,6 +45,12 @@ function toQueryString(filters) {
 
 const encode = encodeURIComponent
 
+export const sendChat = (messages, identifier) => request('POST', '/api/agents/chat', { messages, identifier })
+
+export const draftIssue = fields => request('POST', '/api/issues/draft', fields)
+export const summarizeThread = identifier => request('POST', `/api/issues/${encode(identifier)}/summary`, {})
+export const reviewBlockers = id => request('POST', `/api/projects/${encode(id)}/blockers`, {})
+
 export const getMe = () => request('GET', '/api/me')
 export const getTeams = () => request('GET', '/api/teams')
 export const getTeam = key => request('GET', `/api/teams/${encode(key)}`)

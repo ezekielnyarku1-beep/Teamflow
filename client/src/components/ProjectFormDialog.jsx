@@ -1,3 +1,6 @@
+import FieldPicker from './FieldPicker.jsx'
+import EmptyState from './EmptyState.jsx'
+import { Folder } from './EmptyPictures.jsx'
 import { useState } from 'react'
 import Dialog from './Dialog.jsx'
 import QueryState from './QueryState.jsx'
@@ -8,14 +11,14 @@ function OwnerSelect({ teamKey, value, onChange }) {
   return (
     <label>
       Owner
-      <select className="input" value={value} onChange={event => onChange(event.target.value)} disabled={!team.data}>
+      <FieldPicker label="Owner" className="input" value={value} onChange={event => onChange(event.target.value)} disabled={!team.data}>
         <option value="">No owner</option>
         {(team.data?.members ?? []).map(member => (
           <option key={member.id} value={member.id}>
             {member.name}
           </option>
         ))}
-      </select>
+      </FieldPicker>
     </label>
   )
 }
@@ -56,13 +59,13 @@ function ProjectForm({ project, teams, teamKey, onClose }) {
       <div className="dialog-form-row">
         <label>
           Team
-          <select className="input" value={fields.teamKey} disabled={Boolean(project)} onChange={event => set('teamKey')(event.target.value)}>
+          <FieldPicker label="Team" className="input" value={fields.teamKey} disabled={Boolean(project)} onChange={event => set('teamKey')(event.target.value)}>
             {teams.map(team => (
               <option key={team.key} value={team.key}>
                 {team.name}
               </option>
             ))}
-          </select>
+          </FieldPicker>
         </label>
         <OwnerSelect teamKey={fields.teamKey} value={fields.ownerId} onChange={set('ownerId')} />
       </div>
@@ -106,7 +109,7 @@ export default function ProjectFormDialog({ project, teamKey, onClose }) {
           data.length ? (
             <ProjectForm project={project} teamKey={teamKey} teams={data} onClose={onClose} />
           ) : (
-            <p className="empty-state">Create a team first in Settings.</p>
+            <EmptyState illustration={Folder} title="A team is needed" description="Create a team first in Settings." />
           )}
       </QueryState>
     </Dialog>

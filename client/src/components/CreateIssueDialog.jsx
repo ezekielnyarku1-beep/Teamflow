@@ -1,13 +1,20 @@
+import FieldPicker from './FieldPicker.jsx'
+import EmptyState from './EmptyState.jsx'
+import { People } from './EmptyPictures.jsx'
 import { useState } from 'react'
 import Dialog from './Dialog.jsx'
 import PriorityIcon from './PriorityIcon.jsx'
 import StatusIcon from './StatusIcon.jsx'
 import QueryState from './QueryState.jsx'
+import { draftIssue } from '../lib/api.js'
+import { useFormAction } from '../lib/useFormAction.js'
 import { priorities, statuses } from '../lib/issueOptions.js'
 import { useCreateIssue, useTeams } from '../lib/queries.js'
 
 function CreateIssueForm({ teams, defaultTeamKey, cycleId, onClose }) {
   const createIssue = useCreateIssue()
+  const drafting = useFormAction()
+  const [suggestion, setSuggestion] = useState(null)
   const [fields, setFields] = useState({
     teamKey: teams.some(team => team.key === defaultTeamKey) ? defaultTeamKey : teams[0].key,
     title: '',
@@ -30,33 +37,33 @@ function CreateIssueForm({ teams, defaultTeamKey, cycleId, onClose }) {
       <div className="dialog-form-row">
         <label>
           Team
-          <select className="input" value={fields.teamKey} onChange={set('teamKey')}>
+          <FieldPicker label="Team" className="input" value={fields.teamKey} onChange={set('teamKey')}>
             {teams.map(team => (
               <option key={team.key} value={team.key}>
                 {team.name}
               </option>
             ))}
-          </select>
+          </FieldPicker>
         </label>
         <label>
           <span className="issue-field-label"><StatusIcon status={fields.status} />Status</span>
-          <select className="input" value={fields.status} onChange={set('status')}>
+          <FieldPicker label="Status" className="input" value={fields.status} onChange={set('status')}>
             {statuses.map(status => (
               <option key={status.value} value={status.value}>
                 {status.label}
               </option>
             ))}
-          </select>
+          </FieldPicker>
         </label>
         <label>
           <span className="issue-field-label"><PriorityIcon priority={fields.priority} />Priority</span>
-          <select className="input" value={fields.priority} onChange={set('priority')}>
+          <FieldPicker label="Priority" className="input" value={fields.priority} onChange={set('priority')}>
             {priorities.map(priority => (
               <option key={priority.value} value={priority.value}>
                 {priority.label}
               </option>
             ))}
-          </select>
+          </FieldPicker>
         </label>
       </div>
       <label>
@@ -67,6 +74,21 @@ function CreateIssueForm({ teams, defaultTeamKey, cycleId, onClose }) {
         Description
         <textarea className="input" rows={4} maxLength={10000} value={fields.description} onChange={set('description')} />
       </label>
+      <button className="button" type="button" disabled={!fields.title.trim() || drafting.busy}
+        onClick={() => drafting.run(async () => {
+          setSuggestion(null)
+          setSuggestion(await draftIssue({ teamKey: fields.teamKey, sentence: fields.title }))
+        })}>{drafting.busy ? 'Drafting…' : 'Draft from title with AI'}</button>
+      {drafting.error && <p className="inline-error" role="alert">{drafting.error}</p>}
+      {suggestion && <section aria-label="Suggested draft">
+        <strong>{suggestion.title}</strong>
+        <p>{suggestion.description}</p>
+        <p>Suggested priority · {priorities.find(p => p.value === suggestion.priority)?.label}</p>
+        <button type="button" className="button" onClick={() => {
+          setFields(current => ({ ...current, ...suggestion }))
+          setSuggestion(null)
+        }}>Use this draft</button>
+      </section>}
       {createIssue.isError && (
         <p className="inline-error" role="alert">
           The issue was not created: {createIssue.error.message}
@@ -93,7 +115,7 @@ export default function CreateIssueDialog({ defaultTeamKey, cycleId, onClose }) 
           data.length ? (
             <CreateIssueForm teams={data} defaultTeamKey={defaultTeamKey} cycleId={cycleId} onClose={onClose} />
           ) : (
-            <p className="empty-state">You are not in any team yet, so you cannot create issues.</p>
+            <EmptyState illustration={People} title="No teams available" description="Join a team before creating an issue." />
           )}
       </QueryState>
     </Dialog>

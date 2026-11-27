@@ -1,3 +1,4 @@
+import FieldPicker from '../../components/FieldPicker.jsx'
 import { useState } from 'react'
 import { useOutletContext } from 'react-router'
 import QueryState from '../../components/QueryState.jsx'
@@ -25,11 +26,11 @@ function Preferences() {
               <label htmlFor="appearance" className="settings-row-title">Color theme</label>
               <span id="appearance-description" className="settings-description">Choose how the app looks on this device.</span>
             </div>
-            <select id="appearance" aria-describedby="appearance-description" className="input settings-role" value={appearance} onChange={changeAppearance}>
+            <FieldPicker label="Color theme" id="appearance" aria-describedby="appearance-description" className="input settings-role" value={appearance} onChange={changeAppearance}>
               {appearances.map(theme => (
                 <option key={theme} value={theme}>{theme[0].toUpperCase() + theme.slice(1)}</option>
               ))}
-            </select>
+            </FieldPicker>
           </div>
           {!saved && <p className="settings-feedback muted" role="status">This browser could not save your theme.</p>}
         </div>

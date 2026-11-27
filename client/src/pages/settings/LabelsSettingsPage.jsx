@@ -1,3 +1,5 @@
+import EmptyState from '../../components/EmptyState.jsx'
+import { Tag } from '../../components/EmptyPictures.jsx'
 import { useState } from 'react'
 import LabelSettingsRow from '../../components/LabelSettingsRow.jsx'
 import QueryState from '../../components/QueryState.jsx'
@@ -62,7 +64,7 @@ export default function LabelsSettingsPage() {
         <QueryState query={labels} label="labels">
           {data =>
             data.length === 0 ? (
-              <p className="muted">No labels yet.</p>
+              <EmptyState illustration={Tag} title="No labels yet" description="Use labels to organize issues across teams." />
             ) : (
               <ul className="settings-card settings-list">
                 {data.map(label => (

@@ -125,7 +125,6 @@
   cursor: pointer;
 }
 @media (max-width: 768px) {
-  .settings { grid-template-columns: clamp(120px, 30vw, 184px) minmax(0, 1fr); }
   .settings-sidebar { padding: var(--space-3) var(--space-2); }
   .settings-sidebar input { font-size: var(--text-input-phone); }
   .settings-sidebar a { min-height: var(--tap-target); }
@@ -141,7 +140,7 @@
   .color-input { width: var(--tap-target); height: var(--tap-target); }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .settings { grid-template: auto 1fr / minmax(0, 1fr); }
   .settings-sidebar {
     position: static;

@@ -1,6 +1,8 @@
+import EmptyState from './EmptyState.jsx'
+import { People, Layers as SavedViewsPicture } from './EmptyPictures.jsx'
 import { useRef, useState, useSyncExternalStore } from 'react'
 import { Link, matchPath, useLocation, useSearchParams } from 'react-router'
-import { ChevronDown, CircleDot, Folder, Inbox, Layers, LayoutGrid, ListChecks, Menu, Search, SquarePen, X } from 'lucide-react'
+import { Bot, ChevronDown, CircleDot, Folder, Inbox, Layers, LayoutGrid, ListChecks, Menu, Search, SquarePen, X } from 'lucide-react'
 import AccountMenu from './AccountMenu.jsx'
 import Dialog from './Dialog.jsx'
 import { prefetchPage, useMe, useNotifications, useTeams, useViews } from '../lib/queries.js'
@@ -141,6 +143,9 @@ export default function Sidebar() {
           <li>
             <SidebarLink to="/my-issues" active={onPath('/my-issues')} icon={icons.myIssues}>My issues</SidebarLink>
           </li>
+          <li>
+            <SidebarLink to="/agents" active={onPath('/agents')} icon={Bot}>Agents</SidebarLink>
+          </li>
         </ul>
 
         <Section id="workspace" title="Workspace" closed={closedSections.has('workspace')} onToggle={() => closedSections.toggle('workspace')}>
@@ -163,7 +168,7 @@ export default function Sidebar() {
               </button>
             </p>
           )}
-          {teams.data?.length === 0 && <p className="sidebar-note">You are not in any teams yet.</p>}
+          {teams.data?.length === 0 && <EmptyState illustration={People} title="No teams yet" description="Your teams appear here." compact />}
           <ul className="sidebar-links">
             {(teams.data ?? []).map(team => {
               const open = openTeams.has(team.key)
@@ -205,7 +210,7 @@ export default function Sidebar() {
         </Section>
 
         <Section id="views" title="Views" closed={closedSections.has('views')} onToggle={() => closedSections.toggle('views')}>
-          {views.data?.length === 0 && <p className="sidebar-note">No saved views yet.</p>}
+          {views.data?.length === 0 && <EmptyState illustration={SavedViewsPicture} title="No saved views" description="Save issue filters to see them here." compact />}
           <ul className="sidebar-links">
             {(views.data ?? []).map(view => (
               <li key={view.id}>

@@ -1,3 +1,5 @@
+import EmptyState from '../../components/EmptyState.jsx'
+import { People } from '../../components/EmptyPictures.jsx'
 import { useState } from 'react'
 import QueryState from '../../components/QueryState.jsx'
 import TeamSettingsCard from '../../components/TeamSettingsCard.jsx'
@@ -55,7 +57,7 @@ export default function TeamsSettingsPage() {
           {userList => (
             <QueryState query={teams} label="teams">
               {teamList => (
-                teamList.length === 0 ? <p className="muted">No teams yet.</p> : (
+                teamList.length === 0 ? <EmptyState illustration={People} title="No teams yet" description="Teams group people and their work." /> : (
                   <div className="settings-cards">
                     {teamList.map(team => (
                       <TeamSettingsCard key={team.key} team={team} users={userList} />

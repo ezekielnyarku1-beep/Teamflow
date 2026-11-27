@@ -1,3 +1,5 @@
+import EmptyState from './EmptyState.jsx'
+import { Activity } from './EmptyPictures.jsx'
 import Skeleton from './Skeleton.jsx'
 import { formatDateTime, formatShortDate } from '../lib/format.js'
 import { priorityLabel, statusLabel } from '../lib/issueOptions.js'
@@ -21,7 +23,7 @@ export default function IssueActivity({ issue }) {
     <section className="issue-section" aria-labelledby={`activity-${issue.id}`}>
       <h3 id={`activity-${issue.id}`}>Activity</h3>
       {!issue.activity && <Skeleton label="activity" layout="short" />}
-      {issue.activity?.length === 0 && <p className="muted">No activity yet.</p>}
+      {issue.activity?.length === 0 && <EmptyState illustration={Activity} title="No activity yet" description="Changes to this issue appear here." compact />}
       <ol className="activity-list">
         {issue.activity?.map(entry => (
           <li key={entry.id}>

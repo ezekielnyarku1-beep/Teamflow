@@ -1,3 +1,4 @@
+import FieldPicker from './FieldPicker.jsx'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import Dialog from './Dialog.jsx'
@@ -39,14 +40,14 @@ export default function ViewFormDialog({ view, teamKey = '', filter, onClose }) 
         </label>
         <label>
           Issues from
-          <select className="input" value={scope} onChange={event => setScope(event.target.value)}>
+          <FieldPicker label="Scope" className="input" value={scope} onChange={event => setScope(event.target.value)}>
             <option value="">All my teams</option>
             {(teams.data ?? []).map(team => (
               <option key={team.key} value={team.key}>
                 {team.name}
               </option>
             ))}
-          </select>
+          </FieldPicker>
         </label>
         {!view && <p className="muted">The filters you have chosen are saved with the view. Only you can see it.</p>}
         {save.isError && (

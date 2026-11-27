@@ -1,3 +1,5 @@
+import EmptyState from './EmptyState.jsx'
+import { Checklist, Issue, Filter, Cycle, Folder, Layers } from './EmptyPictures.jsx'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import IssueBoard from './IssueBoard.jsx'
@@ -9,7 +11,7 @@ import QueryState from './QueryState.jsx'
 import { countOf } from '../lib/format.js'
 import { applyFilter, emptyFilter } from '../lib/issueFilter.js'
 import { recall, remember } from '../lib/pageMemory.js'
-import { useDeleteIssue, useIssues, useUpdateIssue } from '../lib/queries.js'
+import { useDeleteIssue, useIssues, useTeams, useUpdateIssue } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
 
 const views = [
@@ -79,6 +81,7 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
     )
   }
 
+  const teams = useTeams()
   const visible = issues.data ? applyFilter(issues.data, filter) : []
   const meta = issues.data && (visible.length === issues.data.length
     ? countOf(issues.data.length, 'issue')
@@ -106,24 +109,23 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
         {summary}
         <QueryState query={issues} label="issues">
           {data => {
+            if (!data.length && view === 'board') return <IssueBoard issues={data} onMenu={openMenu} />
             if (!data.length) {
               return (
-                <div className="empty-state">
-                  <p>No issues here yet.</p>
-                  <button type="button" className="button is-primary" onClick={() => openCreateIssue(teamKey, cycleId)}>
+                <EmptyState illustration={filters?.assignee ? Checklist : filters?.project ? Folder : filters?.cycle ? Cycle : initialFilter !== emptyFilter ? Layers : Issue} title="No issues here yet" description="Issues in this list will appear here.">
+                  {teams.data?.length > 0 && <button type="button" className="button is-primary" onClick={() => openCreateIssue(teamKey, cycleId)}>
                     Create an issue
-                  </button>
-                </div>
+                  </button>}
+                </EmptyState>
               )
             }
             if (!visible.length) {
               return (
-                <div className="empty-state">
-                  <p>No issues match these filters.</p>
+                <EmptyState illustration={Filter} title="No matching issues" description="Clear the filters to see more issues.">
                   <button type="button" className="button" onClick={() => setFilter(emptyFilter)}>
                     Clear filters
                   </button>
-                </div>
+                </EmptyState>
               )
             }
             return view === 'board'

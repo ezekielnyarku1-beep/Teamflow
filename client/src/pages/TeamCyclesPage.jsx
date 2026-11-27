@@ -1,3 +1,5 @@
+import EmptyState from '../components/EmptyState.jsx'
+import { Cycle } from '../components/EmptyPictures.jsx'
 import { Link, useParams } from 'react-router'
 import PageHeader from '../components/PageHeader.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
@@ -24,7 +26,7 @@ export default function TeamCyclesPage() {
           <QueryState query={cycles} label="cycles">
             {data =>
               data.length === 0 ? (
-                <p className="empty-state">This team has no cycles yet. An admin can turn them on in Settings, under Teams.</p>
+                <EmptyState illustration={Cycle} title="No cycles yet" description="An admin can turn on cycles in team settings." />
               ) : (
                 <ul className="simple-rows">
                   {data.map(cycle => (

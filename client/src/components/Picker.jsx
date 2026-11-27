@@ -1,3 +1,5 @@
+import EmptyState from './EmptyState.jsx'
+import { Options } from './EmptyPictures.jsx'
 import { useEffect, useId, useRef, useState } from 'react'
 import { Check } from 'lucide-react'
 import { iconProps } from '../lib/icons.js'
@@ -31,7 +33,7 @@ function PickerList({ label, options, value, multiple, onPick }) {
     }
   }
 
-  if (!options.length) return <p className="picker-empty">Nothing to choose yet.</p>
+  if (!options.length) return <EmptyState illustration={Options} title="No options yet" description="Available choices will appear here." compact />
 
   return (
     <ul
@@ -54,7 +56,7 @@ function PickerList({ label, options, value, multiple, onPick }) {
           onPointerMove={event => {
             if (event.pointerType === 'mouse') setActiveIndex(index)
           }}
-          onClick={() => onPick(option.value)}
+          onClick={event => { event.preventDefault(); onPick(option.value) }}
         >
           {option.icon}
           <span className="picker-label">{option.label}</span>
@@ -65,9 +67,9 @@ function PickerList({ label, options, value, multiple, onPick }) {
   )
 }
 
-export default function Picker({ label, options, value, onChange, multiple = false, buttonContent, buttonClassName }) {
+export default function Picker({ label, options, value, onChange, multiple = false, buttonContent, buttonClassName, triggerProps }) {
   return (
-    <Popover label={label} buttonContent={buttonContent} buttonClassName={buttonClassName}>
+    <Popover triggerProps={triggerProps} label={label} buttonContent={buttonContent} buttonClassName={buttonClassName}>
       {close => (
         <PickerList
           label={label}

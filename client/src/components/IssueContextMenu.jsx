@@ -1,3 +1,5 @@
+import EmptyState from './EmptyState.jsx'
+import { Search } from './EmptyPictures.jsx'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Check } from 'lucide-react'
@@ -129,7 +131,7 @@ function Submenu({ issue, item, menuRef, anchorIndex, onPick, onBack }) {
         />
       )}
       {loading && <p className="picker-empty">Loading…</p>}
-      {!loading && !shown.length && <p className="picker-empty">No matches.</p>}
+      {!loading && !shown.length && <EmptyState illustration={Search} title="No matches" description="Try another search term." compact />}
       <ul className="picker" role="menu" aria-label={item.label}>
         {shown.map((option, index) => (
           <li

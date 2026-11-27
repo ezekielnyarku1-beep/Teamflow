@@ -1,3 +1,5 @@
+import EmptyState from '../components/EmptyState.jsx'
+import { Folder } from '../components/EmptyPictures.jsx'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import PageHeader from '../components/PageHeader.jsx'
@@ -14,20 +16,20 @@ export default function ProjectsPage() {
   const isAdmin = useIsAdmin()
   const [creating, setCreating] = useState(false)
 
+  const newProject = isAdmin && (
+    <button type="button" className="button is-primary" onClick={() => setCreating(true)}>New project</button>
+  )
+
   return (
     <div className="projects-page">
       <PageHeader title="Projects" meta={shown && `${countOf(shown.length, 'project')}${teamKey ? ` in ${teamKey}` : ''}`}>
-        {isAdmin && (
-          <button type="button" className="button is-primary" onClick={() => setCreating(true)}>
-            New project
-          </button>
-        )}
+        {shown?.length !== 0 && newProject}
       </PageHeader>
       {creating && <ProjectFormDialog teamKey={teamKey} onClose={() => setCreating(false)} />}
       <QueryState query={projects} label="projects">
         {() =>
           shown.length === 0 ? (
-            <p className="empty-state">{teamKey ? `No projects in ${teamKey} yet.` : 'No projects yet. Admins can create projects.'}</p>
+            <EmptyState illustration={Folder} title={teamKey ? `No projects in ${teamKey} yet` : "No projects yet"} description="Admins can create projects for their teams.">{newProject}</EmptyState>
           ) : (
             <ul className="project-rows">
               {shown.map(project => (

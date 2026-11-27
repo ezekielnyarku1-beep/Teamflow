@@ -1,14 +1,14 @@
 import { Link } from 'react-router'
+import EmptyState from '../components/EmptyState.jsx'
+import { Access } from '../components/EmptyPictures.jsx'
 import './auth/auth.css'
 
 export default function NoAccessPage() {
   return (
-    <div className="message-page account-access">
-      <h1>You do not have access to this page</h1>
-      <p className="muted">Only admins can open this page. Ask an admin if you need access.</p>
+    <EmptyState illustration={Access} title="You do not have access to this page" description="Ask an admin if you need access." heading="h1">
       <Link to="/my-issues" className="button">
         Go to My issues
       </Link>
-    </div>
+    </EmptyState>
   )
 }
