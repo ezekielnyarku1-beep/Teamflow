@@ -684,19 +684,34 @@ span.priority-icon {
 }
 
 .progress {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  display: grid;
   gap: var(--space-2);
+  min-width: 0;
+}
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .progress-track {
   display: flex;
-  flex: 0 0 80px;
+  flex: 1;
+  gap: 2px;
+  min-width: 48px;
   height: 6px;
   overflow: hidden;
-  background: var(--hover);
-  border-radius: 3px;
+  /* Mixed from the muted text colour so the track stays visible on hovered rows and in both themes. */
+  background: color-mix(in srgb, var(--mut) 20%, transparent);
+  border-radius: 999px;
+}
+
+.progress-done,
+.progress-active {
+  flex: none;
+  height: 100%;
+  border-radius: 999px;
 }
 
 .progress-done {
@@ -707,12 +722,53 @@ span.priority-icon {
   background: var(--progress-active);
 }
 
-.progress-text-done { color: var(--progress-done); }
-.progress-text-active { color: var(--progress-active); }
+.progress-percent {
+  flex: none;
+  min-width: 4ch;
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  color: var(--tx);
+  text-align: right;
+}
 
-.progress-text {
+.progress.is-complete .progress-percent {
+  color: var(--progress-done);
+}
+
+.progress-caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
   font-size: var(--text-small);
   color: var(--mut);
+}
+
+.progress-key {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.progress-key::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.progress-key.is-done::before { background: var(--progress-done); }
+.progress-key.is-active::before { background: var(--progress-active); }
+
+/* Table rows stay one line: bar and percentage only, the counts are in the hover title. */
+.project-row .progress-caption,
+.simple-row .progress-caption {
+  display: none;
+}
+
+.project-row .progress.is-empty .progress-caption,
+.simple-row .progress.is-empty .progress-caption {
+  display: flex;
 }
 
 .page-header-meta,
@@ -723,7 +779,7 @@ span.priority-icon {
 .sidebar-badge,
 .project-row-date,
 .project-summary,
-.progress-text,
+.progress-percent,
 .simple-row.is-cycle,
 .overview-due {
   font-variant-numeric: tabular-nums;
