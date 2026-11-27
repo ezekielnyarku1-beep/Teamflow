@@ -19,7 +19,8 @@ export async function createIssue(tx, { teamId, actorId, labelIds = [], ...field
   })
 }
 
-export async function checkIssueReferences(tx, teamId, { assigneeId, projectId, cycleId, labelIds }) {
+export async function checkIssueReferences(tx, teamId, { assigneeId, projectId, cycleId, labelIds, parentId }, { issueId } = {}) {
+  if (parentId) await checkParent(tx, teamId, parentId, issueId)
   if (assigneeId) {
     const membership = await tx.teamMember.findUnique({ where: { teamId_userId: { teamId, userId: assigneeId } } })
     if (!membership) throw new HttpError(400, 'The assignee must be a member of the team.')
@@ -40,6 +41,18 @@ export async function checkIssueReferences(tx, teamId, { assigneeId, projectId, 
   }
 }
 
+// A parent must be in the same team, and an issue can never end up inside its own sub-issues.
+async function checkParent(tx, teamId, parentId, issueId) {
+  if (parentId === issueId) throw new HttpError(400, 'An issue cannot be its own parent.')
+  let current = await tx.issue.findFirst({ where: { id: parentId, teamId }, select: { parentId: true } })
+  if (!current) throw new HttpError(400, 'The parent issue must be in the same team.')
+  for (let depth = 0; issueId && current?.parentId && depth < 50; depth++) {
+    if (current.parentId === issueId) throw new HttpError(400, 'An issue cannot be moved under one of its own sub-issues.')
+    current = await tx.issue.findUnique({ where: { id: current.parentId }, select: { parentId: true } })
+  }
+}
+
+const issueKey = issue => (issue ? `${issue.team.key}-${issue.number}` : null)
 const joinNames = labels => labels.map(label => label.name).sort().join(', ') || null
 const cycleName = cycle => (cycle ? `Cycle ${cycle.number}` : null)
 
@@ -62,14 +75,15 @@ export async function notifyPeople(db, { issueId, actorId, type, userIds }) {
 }
 
 // Tells the assignee and everyone who commented earlier. Never throws, so a saved comment is never reported as failed.
-export async function notifyAboutComment(db, { issueId, commentId, actorId, assigneeId }) {
+export async function notifyAboutComment(db, { issueId, commentId, actorId, assigneeId, skipUserIds = [] }) {
   try {
     const earlier = await db.comment.findMany({
       where: { issueId, id: { not: commentId } },
       select: { authorId: true },
       distinct: ['authorId'],
     })
-    await notifyPeople(db, { issueId, actorId, type: 'COMMENTED', userIds: [assigneeId, ...earlier.map(comment => comment.authorId)] })
+    const userIds = [assigneeId, ...earlier.map(comment => comment.authorId)].filter(id => !skipUserIds.includes(id))
+    await notifyPeople(db, { issueId, actorId, type: 'COMMENTED', userIds })
   } catch (error) {
     console.error('Could not work out who to tell about a comment:', error)
   }
@@ -85,10 +99,29 @@ export function describeChanges(before, after) {
     ['cycle', cycleName(before.cycle), cycleName(after.cycle)],
     ['dueDate', toDateString(before.dueDate), toDateString(after.dueDate)],
     ['labels', joinNames(before.labels), joinNames(after.labels)],
+    ['parent', issueKey(before.parent), issueKey(after.parent)],
   ]
   const changes = comparisons
     .filter(([, fromValue, toValue]) => fromValue !== toValue)
     .map(([field, fromValue, toValue]) => ({ field, fromValue, toValue }))
   if (before.description !== after.description) changes.push({ field: 'description', fromValue: null, toValue: null })
   return changes
+}
+
+// People named as "@Full Name" in a comment. A name only counts when it ends at a space or punctuation, so "@Ann"
+// does not match "@Anna Lee". Matching ignores case.
+export function findMentions(body, people) {
+  const text = body.toLowerCase()
+  return people
+    .filter(person => {
+      const name = person.name.trim().toLowerCase()
+      if (!name) return false
+      for (let at = text.indexOf(`@${name}`); at !== -1; at = text.indexOf(`@${name}`, at + 1)) {
+        const before = at === 0 ? '' : text[at - 1]
+        const after = text[at + 1 + name.length] ?? ''
+        if ((before === '' || /[\s(]/.test(before)) && (after === '' || /[\s.,!?;:)]/.test(after))) return true
+      }
+      return false
+    })
+    .map(person => person.id)
 }

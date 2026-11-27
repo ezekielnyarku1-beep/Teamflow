@@ -13,6 +13,10 @@ export const serializeCycleRef = cycle => cycle && ({
 
 export const creationActivity = { where: { field: null }, orderBy: { createdAt: 'asc' }, take: 1, select: { actorId: true, field: true } }
 
+const closedStatuses = ['DONE', 'CANCELED']
+const issueRefSelect = { id: true, number: true, title: true, status: true, team: { select: { key: true } } }
+const serializeIssueRef = issue => ({ id: issue.id, identifier: `${issue.team.key}-${issue.number}`, title: issue.title, status: issue.status })
+
 export const issueInclude = {
   team: teamSelect,
   assignee: personSelect,
@@ -20,10 +24,16 @@ export const issueInclude = {
   cycle: cycleSelect,
   activities: creationActivity,
   labels: { select: { id: true, name: true, color: true }, orderBy: { name: 'asc' } },
+  parent: { select: issueRefSelect },
+  children: { select: { status: true } },
+  blockedBy: { select: { blocker: { select: { status: true } } } },
 }
 
 export const issueDetailInclude = {
   ...issueInclude,
+  children: { select: issueRefSelect, orderBy: { number: 'asc' } },
+  blockedBy: { select: { blocker: { select: issueRefSelect } }, orderBy: { createdAt: 'asc' } },
+  blocking: { select: { blocked: { select: issueRefSelect } }, orderBy: { createdAt: 'asc' } },
   comments: { include: { author: personSelect }, orderBy: { createdAt: 'asc' } },
   activities: { include: { actor: personSelect }, orderBy: { createdAt: 'asc' } },
 }
@@ -50,13 +60,25 @@ export function serializeIssue(issue) {
     cycle: serializeCycleRef(issue.cycle),
     creatorId: issue.activities.find(activity => activity.field === null)?.actorId ?? null,
     labels: issue.labels,
+    parent: issue.parent ? serializeIssueRef(issue.parent) : null,
+    subIssues: countSubIssues(issue.children),
+    blocked: Boolean(issue.blockedBy?.some(({ blocker }) => !closedStatuses.includes(blocker.status))),
   }
+}
+
+// "3 of 5 done" for an issue's sub-issues. Canceled sub-issues are left out, like project progress.
+function countSubIssues(children = []) {
+  const active = children.filter(child => child.status !== 'CANCELED')
+  return active.length ? { total: active.length, done: active.filter(child => child.status === 'DONE').length } : null
 }
 
 export function serializeIssueDetail(issue) {
   return {
     ...serializeIssue(issue),
     comments: issue.comments.map(serializeComment),
+    children: issue.children.map(serializeIssueRef),
+    blockedBy: issue.blockedBy.map(({ blocker }) => serializeIssueRef(blocker)),
+    blocking: issue.blocking.map(({ blocked }) => serializeIssueRef(blocked)),
     activity: issue.activities.map(activity => ({
       id: activity.id,
       field: activity.field,

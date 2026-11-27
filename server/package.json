@@ -16,7 +16,8 @@
     "db:migrate": "prisma migrate dev && prisma generate",
     "db:seed": "prisma db seed",
     "db:reset": "prisma migrate reset",
-    "make-admin": "node --env-file-if-exists=.env scripts/make-admin.js"
+    "make-admin": "node --env-file-if-exists=.env scripts/make-admin.js",
+    "vercel-build": "node scripts/migrate-on-deploy.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",

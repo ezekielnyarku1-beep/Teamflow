@@ -32,6 +32,7 @@ enum NotificationType {
   ASSIGNED
   COMMENTED
   STATUS_CHANGED
+  MENTIONED
 }
 
 model User {
@@ -120,6 +121,7 @@ model Issue {
   projectId     String?
   cycleId       String?
   dueDate       DateTime?       @db.Date
+  parentId      String?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   team          Team            @relation(fields: [teamId], references: [id])
@@ -130,11 +132,28 @@ model Issue {
   comments      Comment[]
   activities    IssueActivity[]
   notifications Notification[]
+  parent        Issue?          @relation("SubIssues", fields: [parentId], references: [id], onDelete: SetNull)
+  children      Issue[]         @relation("SubIssues")
+  blockedBy     IssueBlock[]    @relation("BlockedIssue")
+  blocking      IssueBlock[]    @relation("BlockerIssue")
 
   @@unique([teamId, number])
   @@index([assigneeId])
   @@index([projectId])
   @@index([cycleId])
+  @@index([parentId])
+}
+
+// "blocker" has to be finished before "blocked" can move on.
+model IssueBlock {
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+  blocker   Issue    @relation("BlockerIssue", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   Issue    @relation("BlockedIssue", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@id([blockerId, blockedId])
+  @@index([blockedId])
 }
 
 model Label {
