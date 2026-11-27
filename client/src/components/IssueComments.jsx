@@ -2,8 +2,6 @@ import EmptyState from './EmptyState.jsx'
 import { Bubbles } from './EmptyPictures.jsx'
 import { useState } from 'react'
 import Avatar from './Avatar.jsx'
-import AssistantAnswer from './AssistantAnswer.jsx'
-import { summarizeThread } from '../lib/api.js'
 import Skeleton from './Skeleton.jsx'
 import { formatDateTime } from '../lib/format.js'
 import { useAddComment } from '../lib/queries.js'
@@ -24,8 +22,6 @@ export default function IssueComments({ issue }) {
   return (
     <section className="issue-section" aria-labelledby={`comments-${issue.id}`}>
       <h3 id={`comments-${issue.id}`}>Comments</h3>
-      {issue.comments?.length > 0 && <AssistantAnswer label="Summarize thread with AI"
-        scope="Based on excerpts from up to 30 recent comments." load={() => summarizeThread(issue.identifier)} />}
       {!issue.comments && <Skeleton label="comments" layout="short" />}
       {issue.comments?.length === 0 && <EmptyState illustration={Bubbles} title="No comments yet" description="Start the conversation below." compact />}
       <ul className="comment-list">

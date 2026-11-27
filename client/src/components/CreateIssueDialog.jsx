@@ -6,15 +6,11 @@ import Dialog from './Dialog.jsx'
 import PriorityIcon from './PriorityIcon.jsx'
 import StatusIcon from './StatusIcon.jsx'
 import QueryState from './QueryState.jsx'
-import { draftIssue } from '../lib/api.js'
-import { useFormAction } from '../lib/useFormAction.js'
 import { priorities, statuses } from '../lib/issueOptions.js'
 import { useCreateIssue, useTeams } from '../lib/queries.js'
 
 function CreateIssueForm({ teams, defaultTeamKey, cycleId, onClose }) {
   const createIssue = useCreateIssue()
-  const drafting = useFormAction()
-  const [suggestion, setSuggestion] = useState(null)
   const [fields, setFields] = useState({
     teamKey: teams.some(team => team.key === defaultTeamKey) ? defaultTeamKey : teams[0].key,
     title: '',
@@ -74,21 +70,6 @@ function CreateIssueForm({ teams, defaultTeamKey, cycleId, onClose }) {
         Description
         <textarea className="input" rows={4} maxLength={10000} value={fields.description} onChange={set('description')} />
       </label>
-      <button className="button" type="button" disabled={!fields.title.trim() || drafting.busy}
-        onClick={() => drafting.run(async () => {
-          setSuggestion(null)
-          setSuggestion(await draftIssue({ teamKey: fields.teamKey, sentence: fields.title }))
-        })}>{drafting.busy ? 'Drafting…' : 'Draft from title with AI'}</button>
-      {drafting.error && <p className="inline-error" role="alert">{drafting.error}</p>}
-      {suggestion && <section aria-label="Suggested draft">
-        <strong>{suggestion.title}</strong>
-        <p>{suggestion.description}</p>
-        <p>Suggested priority · {priorities.find(p => p.value === suggestion.priority)?.label}</p>
-        <button type="button" className="button" onClick={() => {
-          setFields(current => ({ ...current, ...suggestion }))
-          setSuggestion(null)
-        }}>Use this draft</button>
-      </section>}
       {createIssue.isError && (
         <p className="inline-error" role="alert">
           The issue was not created: {createIssue.error.message}

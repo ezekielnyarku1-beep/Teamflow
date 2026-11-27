@@ -7,8 +7,6 @@
     "node": ">=22.18"
   },
   "scripts": {
-    "predev": "node --env-file-if-exists=.env scripts/ensure-local-ai.js",
-    "prestart": "node --env-file-if-exists=.env scripts/ensure-local-ai.js",
     "dev": "node --watch --env-file-if-exists=.env src/index.js",
     "start": "node --env-file-if-exists=.env src/index.js",
     "test": "node --env-file=.env.test --test --test-concurrency=1",

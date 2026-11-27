@@ -2,7 +2,7 @@ import EmptyState from './EmptyState.jsx'
 import { People, Layers as SavedViewsPicture } from './EmptyPictures.jsx'
 import { useRef, useState, useSyncExternalStore } from 'react'
 import { Link, matchPath, useLocation, useSearchParams } from 'react-router'
-import { Bot, ChevronDown, CircleDot, Folder, Inbox, Layers, LayoutGrid, ListChecks, Menu, Search, SquarePen, X } from 'lucide-react'
+import { ChevronDown, CircleDot, Folder, Inbox, Layers, LayoutGrid, ListChecks, Menu, Search, SquarePen, X } from 'lucide-react'
 import AccountMenu from './AccountMenu.jsx'
 import Dialog from './Dialog.jsx'
 import { prefetchPage, useMe, useNotifications, useTeams, useViews } from '../lib/queries.js'
@@ -142,9 +142,6 @@ export default function Sidebar() {
           </li>
           <li>
             <SidebarLink to="/my-issues" active={onPath('/my-issues')} icon={icons.myIssues}>My issues</SidebarLink>
-          </li>
-          <li>
-            <SidebarLink to="/agents" active={onPath('/agents')} icon={Bot}>Agents</SidebarLink>
           </li>
         </ul>
 

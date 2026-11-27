@@ -1,5 +1,4 @@
 import express from 'express'
-import { chatRouter } from './routes/chat.js'
 import cors from 'cors'
 import helmet from 'helmet'
 import { errorHandler, notFoundHandler } from './errors.js'
@@ -25,7 +24,6 @@ export function createApp({ clientOrigin, authenticate }) {
 
   app.use('/api', express.json({ limit: '100kb' }), authenticate)
   app.use('/api/me', meRouter)
-  app.use('/api/agents/chat', chatRouter)
   app.use('/api/teams', teamsRouter)
   app.use('/api/projects', projectsRouter)
   app.use('/api/issues', issuesRouter)
