@@ -25,8 +25,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 3rem;
-  padding: clamp(2rem, 4.5vw, 5rem);
+  gap: var(--space-7);
+  padding: clamp(var(--space-6), 4.5vw, 5rem);
   color: var(--auth-panel-ink);
   background: var(--auth-panel);
   border-right: 1px solid var(--auth-border);
@@ -48,7 +48,7 @@
 .hero-brand {
   display: flex;
   align-items: center;
-  gap: .8rem;
+  gap: var(--space-3);
 }
 
 .hero-brand p,
@@ -67,7 +67,7 @@
 }
 
 .hero-eyebrow {
-  margin: 0 0 1.25rem;
+  margin: 0 0 var(--space-5);
   font-size: var(--text-small);
   font-weight: var(--weight-medium);
 }
@@ -90,22 +90,22 @@
   position: relative;
   display: grid;
   place-items: center;
-  padding: 5rem 1.5rem;
+  padding: var(--space-7) var(--page-padding);
 }
 
 .auth-theme {
   position: absolute;
-  top: 1.25rem;
-  right: 1.5rem;
+  top: var(--space-5);
+  right: var(--space-5);
   display: flex;
-  padding: .2rem;
+  padding: var(--space-1);
   border: 1px solid var(--auth-border);
   border-radius: 2rem;
 }
 
 .auth-theme button {
-  min-height: 40px;
-  padding: 0 .9rem;
+  min-height: var(--tap-target);
+  padding: 0 var(--space-3);
   border: 0;
   border-radius: inherit;
   color: var(--auth-muted);
@@ -141,7 +141,7 @@
 }
 
 .auth-sub {
-  margin: 1rem 0 2rem;
+  margin: var(--space-4) 0 var(--space-6);
   color: var(--auth-muted);
   font-size: var(--text-small);
   line-height: 1.65;
@@ -154,8 +154,8 @@
 
 .auth .field {
   display: grid;
-  gap: .5rem;
-  margin-bottom: .9rem;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .auth .field label {
@@ -167,7 +167,7 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--gap);
+  gap: var(--space-2);
 }
 
 .auth .field-top a,
@@ -182,13 +182,13 @@
 .auth .field-top a,
 .auth-foot a {
   display: inline-block;
-  padding: 10px 0;
-  margin: -10px 0;
+  padding: var(--space-3) 0;
+  margin: calc(-1 * var(--space-3)) 0;
 }
 
 .auth .field .input {
   min-height: 3rem;
-  padding: 0 .85rem;
+  padding: 0 var(--space-3);
   color: var(--auth-ink);
   background: var(--auth-surface);
   border: 1px solid var(--auth-border);
@@ -208,13 +208,13 @@
 }
 
 .auth .password-input .input {
-  padding-right: 4rem;
+  padding-right: calc(var(--space-7) + var(--space-4));
 }
 
 .auth .password-toggle {
   position: absolute;
-  inset: .25rem .25rem .25rem auto;
-  padding: 0 .6rem;
+  inset: var(--space-1) var(--space-1) var(--space-1) auto;
+  padding: 0 var(--space-3);
   color: var(--auth-ink);
   background: transparent;
   border: 0;
@@ -223,7 +223,7 @@
 }
 
 .auth .form-error {
-  margin: 0 0 .6rem;
+  margin: 0 0 var(--space-2);
   color: var(--danger);
 }
 
@@ -238,8 +238,8 @@
 .auth-divider {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 1rem 0;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
   color: var(--auth-muted);
   font-size: var(--text-auth-body);
 }
@@ -255,10 +255,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: var(--space-2);
   width: 100%;
   min-height: 3rem;
-  padding: 0 12px;
+  padding: 0 var(--space-3);
   color: var(--google-text);
   background: var(--google-fill);
   border: 1px solid var(--google-stroke);
@@ -285,8 +285,8 @@
 }
 
 .auth-foot {
-  margin: 1.6rem 0 0;
-  padding-top: 1.3rem;
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-5);
   color: var(--auth-muted);
   border-top: 1px solid var(--auth-border);
   text-align: center;
@@ -297,7 +297,7 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  margin-bottom: 18px;
+  margin-bottom: var(--space-4);
   border: 1px solid var(--auth-border);
   border-radius: 50%;
 }
@@ -309,7 +309,7 @@
 
 .message-page.account-access {
   max-width: 560px;
-  gap: 1.25rem;
+  gap: var(--space-4);
 }
 
 .account-access .muted {
@@ -326,16 +326,16 @@
   }
 
   .auth-form {
-    padding-block: 1.5rem;
+    padding-block: var(--space-5);
   }
 
   .auth-box .hero-brand {
     display: flex;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-5);
   }
 
   .auth-sub {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-5);
   }
 
   .auth .field-top {
@@ -348,14 +348,14 @@
   .auth-resend .link-button {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
+    min-height: var(--tap-target);
     padding-block: 0;
     margin-block: 0;
   }
 
   .auth .password-toggle {
     inset-block: .125rem;
-    min-width: 44px;
+    min-width: var(--tap-target);
   }
 
 }
@@ -375,8 +375,8 @@
 .code-input {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: var(--gap);
-  margin-bottom: .9rem;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .code-input-box {
@@ -399,6 +399,6 @@
 }
 
 .auth-code-resend {
-  margin-top: 1rem;
+  margin-top: var(--space-4);
   text-align: center;
 }

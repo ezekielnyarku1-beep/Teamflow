@@ -1,7 +1,7 @@
 .context-menu {
   z-index: 50;
   width: 200px;
-  max-height: min(360px, calc(100vh - 16px));
+  max-height: min(360px, calc(100vh - var(--space-4)));
 }
 
 .context-submenu {
@@ -27,14 +27,14 @@
 .context-menu .context-menu-divider {
   height: 1px;
   min-height: 0;
-  margin: 4px 0;
+  margin: var(--space-1) 0;
   padding: 0;
   background: var(--line);
   pointer-events: none;
 }
 
 .context-menu-search {
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
   font-size: var(--text-base);
 }
 
@@ -52,10 +52,10 @@
 .toast {
   position: fixed;
   z-index: 60;
-  bottom: 16px;
+  bottom: var(--space-4);
   left: 50%;
-  max-width: calc(100% - 32px);
-  padding: var(--gap-small) 12px;
+  max-width: calc(100% - 2 * var(--space-4));
+  padding: var(--space-3) var(--space-4);
   color: var(--panel);
   background: var(--tx);
   border-radius: var(--radius);

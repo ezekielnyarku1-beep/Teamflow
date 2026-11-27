@@ -1,8 +1,8 @@
 .sidebar-top {
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding-bottom: 12px;
+  gap: var(--space-2);
+  padding-bottom: var(--space-4);
 }
 
 .sidebar-top .popover {
@@ -13,10 +13,10 @@
 .account-button {
   display: flex;
   align-items: center;
-  gap: var(--gap);
+  gap: var(--space-2);
   width: 100%;
   min-height: var(--control-height);
-  padding: 0 var(--gap-small);
+  padding: 0 var(--space-2);
   color: var(--tx);
   background: transparent;
   border: 0;
@@ -54,7 +54,7 @@
 
 .account-menu-email {
   margin: 0;
-  padding: 4px var(--gap) var(--gap-small);
+  padding: var(--space-1) var(--space-2) var(--space-2);
   overflow: hidden;
   font-size: var(--text-small);
   color: var(--mut);
@@ -63,14 +63,14 @@
 }
 
 .account-menu .picker li.is-divided {
-  margin-top: 9px;
+  margin-top: calc(2 * var(--space-1) + 1px);
   position: relative;
 }
 
 .account-menu .picker li.is-divided::before {
   content: "";
   position: absolute;
-  top: -5px;
+  top: calc(-1 * var(--space-1) - 1px);
   right: 0;
   left: 0;
   height: 1px;
@@ -78,7 +78,7 @@
 }
 
 .account-menu-error {
-  margin: var(--gap-small) var(--gap) 0;
+  margin: var(--space-2) var(--space-2) 0;
 }
 
 @media (max-width: 768px) {

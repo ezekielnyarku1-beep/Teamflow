@@ -6,15 +6,15 @@
 
 .overview-content {
   min-width: 0;
-  padding: var(--overview-padding);
+  padding: var(--page-padding);
 }
 
 .overview-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--gap);
-  margin-bottom: var(--overview-gap);
+  gap: var(--space-2);
+  margin-bottom: var(--section-gap);
 }
 
 .overview-header h1 {
@@ -26,7 +26,7 @@
 .overview-columns {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(240px, 1fr);
-  gap: var(--overview-gap);
+  gap: var(--section-gap);
 }
 
 .overview-section-heading {
@@ -34,8 +34,8 @@
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--gap);
-  padding-bottom: var(--gap);
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--line);
 }
 
@@ -56,10 +56,10 @@
 .overview-issue {
   display: flex;
   align-items: center;
-  gap: var(--gap);
+  gap: var(--space-2);
   width: 100%;
   min-height: var(--row-list);
-  padding: var(--gap) var(--gap-small);
+  padding: var(--space-3) var(--space-2);
   text-align: left;
   border: 0;
   border-bottom: 1px solid var(--line);
@@ -98,7 +98,7 @@
 .overview-priority {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: var(--space-1);
   vertical-align: middle;
 }
 
@@ -108,15 +108,22 @@
 
 .overview-project {
   display: grid;
-  gap: 4px;
-  padding: var(--gap) var(--gap-small);
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
   border-bottom: 1px solid var(--line);
   overflow-wrap: anywhere;
 }
 
+.overview-more {
+  margin: 0;
+  padding: var(--space-3) var(--space-2) 0;
+  font-size: var(--text-small);
+  color: var(--mut);
+}
+
 .overview-empty {
   margin: 0;
-  padding-block: var(--gap);
+  padding-block: var(--space-3);
   color: var(--mut);
 }
 
@@ -128,7 +135,7 @@
 
 @media (max-width: 768px) {
   .overview-content {
-    padding-inline: 12px;
+    padding-inline: var(--page-padding);
   }
 
   .overview-header {
@@ -154,13 +161,13 @@
 
   .overview-due {
     width: 100%;
-    padding-left: calc(16px + var(--gap));
+    padding-left: calc(16px + var(--space-2));
   }
 
   .overview-section-heading a {
     display: inline-block;
-    padding: 10px 0;
-    margin: -10px 0;
+    padding: var(--space-3) 0;
+    margin: calc(-1 * var(--space-3)) 0;
   }
 }
 

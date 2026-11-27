@@ -39,15 +39,34 @@
   --weight-heading: var(--weight-semibold);
   --tracking-title: -0.01em;
 
-  --gap-small: 6px;
-  --gap: 8px;
-  --radius: 6px;
-  --row-list: 32px;
-  --row-menu: 28px;
-  --control-height: 28px;
+  /* Spacing scale. Rhythm: 8px icon to label and between related items, 16px between groups,
+     24px between sections, 32px between major blocks. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Sizes */
+  --row-compact: 32px;
+  --row-list: 40px;
+  --row-menu: 32px;
+  --control-height: 32px;
   --tap-target: 40px;
-  --overview-padding: 24px;
-  --overview-gap: 32px;
+  --page-padding: var(--space-6);
+  --section-gap: var(--space-6);
+  --card-padding: var(--space-4);
+  --dialog-padding: var(--space-5);
+
+  /* Older names, kept so nothing that still uses them breaks */
+  --gap-small: var(--space-2);
+  --gap: var(--space-2);
+  --overview-padding: var(--page-padding);
+  --overview-gap: var(--section-gap);
+
+  --radius: 6px;
 
   --motion-fast: 120ms;
   --motion: 180ms;
@@ -172,7 +191,7 @@ kbd {
   font: inherit;
   font-size: var(--text-small);
   color: var(--mut);
-  padding: 0 var(--gap-small);
+  padding: 0 var(--space-1);
   border: 1px solid var(--line);
   border-radius: 4px;
 }
@@ -182,9 +201,9 @@ kbd {
 .property-button {
   display: inline-flex;
   align-items: center;
-  gap: var(--gap-small);
+  gap: var(--space-2);
   min-height: var(--control-height);
-  padding: 0 10px;
+  padding: 0 var(--space-3);
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -240,21 +259,21 @@ kbd {
 .input {
   width: 100%;
   min-height: var(--control-height);
-  padding: 4px var(--gap);
+  padding: var(--space-1) var(--space-3);
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
 
 .inline-error {
-  margin: 0 0 var(--gap);
+  margin: 0 0 var(--space-2);
   color: var(--danger);
 }
 
 .query-state,
 .empty-state {
   margin: 0;
-  padding: 32px 24px;
+  padding: var(--space-6) var(--page-padding);
   color: var(--mut);
 }
 
@@ -264,11 +283,14 @@ kbd {
 
 .query-state.is-error p,
 .empty-state p {
-  margin: 0 0 var(--gap);
+  margin: 0 0 var(--space-4);
+}
+
+@media (max-width: 768px) {
+  :root { --page-padding: var(--space-4); }
 }
 
 @media (max-width: 640px) {
-  :root { --tap-target: 44px; }
 
   .input { font-size: var(--text-input-phone); }
 
