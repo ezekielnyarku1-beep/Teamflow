@@ -1,11 +1,28 @@
 .context-menu {
   z-index: 50;
-  width: 200px;
+  width: min(13.5rem, calc(100% - var(--space-4)));
   max-height: min(360px, calc(100vh - var(--space-4)));
 }
 
+.context-link-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.context-link-row > a {
+  align-self: stretch;
+  flex: 1;
+  min-width: 0;
+}
+
+.context-link-button {
+  flex: none;
+  margin-inline-end: var(--space-2);
+}
+
 .context-submenu {
-  width: 240px;
+  width: min(15rem, calc(100% - var(--space-4)));
 }
 
 .context-menu:focus {
@@ -16,8 +33,23 @@
   color: var(--danger);
 }
 
+.context-menu li[aria-expanded="true"] {
+  background: var(--hover);
+}
+
+.context-menu li > svg {
+  flex: none;
+}
+
+.context-menu-back { display: none; }
+
 .context-menu kbd {
   margin-left: auto;
+  color: var(--mut);
+}
+
+.context-submenu:has(.context-menu-search:focus) kbd {
+  visibility: hidden;
 }
 
 .context-menu-arrow {
@@ -34,7 +66,9 @@
 }
 
 .context-menu-search {
-  margin-bottom: var(--space-1);
+  position: sticky;
+  top: 0;
+  margin-bottom: var(--space-2);
   font-size: var(--text-base);
 }
 
@@ -64,21 +98,40 @@
   translate: -50% 0;
 }
 
-@media (max-width: 768px) {
-  .context-menu li {
-    min-height: var(--tap-target);
+@media (max-width: 768px), (pointer: coarse) {
+  .context-menu-root[data-submenu-open="true"] > [role="menu"] {
+    visibility: hidden;
   }
 
-  /* Taller on phones so every action, including Delete, fits without scrolling. */
+  .context-menu-back {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    min-height: var(--tap-target);
+    margin-bottom: var(--space-1);
+    padding: 0 var(--space-2);
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+    font-weight: var(--weight-semibold);
+    text-align: start;
+    cursor: pointer;
+  }
+
   .context-menu {
     max-height: min(480px, calc(100dvh - var(--space-4)));
   }
+
+  .context-menu kbd { display: none; }
 
   .context-menu-search {
     min-height: var(--tap-target);
     font-size: var(--text-input-phone);
   }
+}
 
+@media (max-width: 768px) {
   .toast {
     bottom: calc(76px + env(safe-area-inset-bottom));
   }

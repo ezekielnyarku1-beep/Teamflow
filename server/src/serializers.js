@@ -13,7 +13,7 @@ export const serializeCycleRef = cycle => cycle && ({
 
 export const creationActivity = { where: { field: null }, orderBy: { createdAt: 'asc' }, take: 1, select: { actorId: true, field: true } }
 
-const closedStatuses = ['DONE', 'CANCELED']
+const closedStatuses = ['DONE']
 const issueRefSelect = { id: true, number: true, title: true, status: true, team: { select: { key: true } } }
 const serializeIssueRef = issue => ({ id: issue.id, identifier: `${issue.team.key}-${issue.number}`, title: issue.title, status: issue.status })
 
@@ -66,10 +66,9 @@ export function serializeIssue(issue) {
   }
 }
 
-// "3 of 5 done" for an issue's sub-issues. Canceled sub-issues are left out, like project progress.
+// "3 of 5 done" for an issue's sub-issues.
 function countSubIssues(children = []) {
-  const active = children.filter(child => child.status !== 'CANCELED')
-  return active.length ? { total: active.length, done: active.filter(child => child.status === 'DONE').length } : null
+  return children.length ? { total: children.length, done: children.filter(child => child.status === 'DONE').length } : null
 }
 
 export function serializeIssueDetail(issue) {

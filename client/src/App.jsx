@@ -19,6 +19,8 @@ import ProjectPage from './pages/ProjectPage.jsx'
 import ProjectsPage from './pages/ProjectsPage.jsx'
 import TeamCyclesPage from './pages/TeamCyclesPage.jsx'
 import TeamIssuesPage from './pages/TeamIssuesPage.jsx'
+import TeamMomentumPage from './pages/TeamMomentumPage.jsx'
+import PersonPage from './pages/PersonPage.jsx'
 import ViewPage from './pages/ViewPage.jsx'
 import ViewsPage from './pages/ViewsPage.jsx'
 import LabelsSettingsPage from './pages/settings/LabelsSettingsPage.jsx'
@@ -46,6 +48,10 @@ export default function App() {
           <Route path="inbox" element={<InboxPage />} />
           <Route path="team/:teamKey" element={<TeamIssuesPage />} />
           <Route path="team/:teamKey/cycles" element={<TeamCyclesPage />} />
+          <Route element={<RequireAdmin />}>
+            <Route path="team/:teamKey/momentum" element={<TeamMomentumPage />} />
+          </Route>
+          <Route path="people/:userId" element={<PersonPage />} />
           <Route path="team/:teamKey/cycles/:cycleNumber" element={<CyclePage />} />
           <Route path="views" element={<ViewsPage />} />
           <Route path="views/:viewId" element={<ViewPage />} />

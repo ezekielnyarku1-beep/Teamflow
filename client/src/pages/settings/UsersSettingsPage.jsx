@@ -2,6 +2,7 @@ import FieldPicker from '../../components/FieldPicker.jsx'
 import EmptyState from '../../components/EmptyState.jsx'
 import { People } from '../../components/EmptyPictures.jsx'
 import Avatar from '../../components/Avatar.jsx'
+import ContextLink from '../../components/ContextLink.jsx'
 import QueryState from '../../components/QueryState.jsx'
 import { useUpdateUserRole, useUsers } from '../../lib/queries.js'
 
@@ -23,7 +24,9 @@ export default function UsersSettingsPage() {
                 <li key={user.id} className="settings-row">
                   <Avatar name={user.name} />
                   <span className="settings-row-main">
-                    <span className="settings-row-title">{user.name}</span>
+                    <ContextLink to={`/people/${user.id}`} className="settings-row-title" name={user.name} openLabel="Open activity">
+                      {user.name}
+                    </ContextLink>
                     <span className="settings-description">{user.email}</span>
                   </span>
                   <span className="settings-row-meta muted">

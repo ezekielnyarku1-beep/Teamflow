@@ -1,0 +1,288 @@
+/* Projects list: a sortable table built from a grid so each row can stay one link. */
+
+.projects-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--page-padding);
+}
+
+.projects-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.projects-chip {
+  height: 28px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-small);
+  color: var(--mut);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.projects-chip:hover {
+  color: var(--tx);
+  background: var(--hover);
+}
+
+.projects-chip[aria-pressed="true"] {
+  color: var(--bg);
+  background: var(--acc);
+  border-color: var(--acc);
+}
+
+.projects-count {
+  font-size: var(--text-small);
+  color: var(--mut);
+  font-variant-numeric: tabular-nums;
+}
+
+.projects-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.projects-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(140px, 1.3fr) 56px;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 60px;
+  padding: 0 var(--page-padding);
+  border-bottom: 0.5px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+
+a.projects-row:hover,
+a.projects-row:focus-visible {
+  background: var(--hover);
+}
+
+a.projects-row:focus-visible {
+  outline-offset: -2px;
+}
+
+.projects-head {
+  min-height: var(--row-compact);
+}
+
+.projects-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+  color: var(--mut);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.projects-sort:hover,
+.projects-sort.is-active {
+  color: var(--tx);
+}
+
+.projects-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.projects-issues {
+  justify-content: flex-end;
+  color: var(--mut);
+  font-variant-numeric: tabular-nums;
+}
+
+.projects-name-cell {
+  gap: var(--space-3);
+}
+
+.projects-tile {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--mut);
+  background: color-mix(in srgb, var(--mut) 12%, transparent);
+  border-radius: 8px;
+}
+
+.projects-name-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.projects-name,
+.projects-team,
+.projects-lead-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.projects-name {
+  font-weight: var(--weight-medium);
+}
+
+.projects-team,
+.projects-due {
+  font-size: var(--text-small);
+  color: var(--mut);
+}
+
+.projects-lead .avatar {
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+}
+
+.projects-target {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.projects-date {
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.projects-due.is-overdue {
+  color: var(--danger);
+}
+
+.projects-progress {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.projects-progress-track {
+  display: flex;
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+  background: var(--hover);
+  border-radius: 999px;
+}
+
+.projects-progress-done {
+  background: var(--progress-done);
+}
+
+.projects-progress-active {
+  background: var(--progress-active);
+}
+
+.projects-progress-percent {
+  min-width: 3ch;
+  font-size: var(--text-small);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The thin bar under the name only shows on narrow screens. */
+.projects-progress.is-compact {
+  display: none;
+}
+
+.projects-none {
+  padding: var(--space-5) var(--page-padding);
+}
+
+.skeleton {
+  display: block;
+  background: var(--hover);
+  border-radius: 4px;
+}
+
+.skeleton-line {
+  width: 70%;
+  height: 10px;
+}
+
+.skeleton-line.is-short {
+  width: 40%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .projects-progress-track {
+    transform-origin: left;
+    animation: projects-bar-in var(--motion-slow) var(--ease-out) both;
+  }
+
+  .projects-chip,
+  a.projects-row {
+    transition: background-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out;
+  }
+
+  .skeleton {
+    animation: projects-pulse 1.2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes projects-bar-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes projects-pulse {
+  from { opacity: 1; }
+  to { opacity: 0.5; }
+}
+
+@media (max-width: 768px) {
+  .projects-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .projects-row .is-wide {
+    display: none;
+  }
+
+  .projects-progress.is-compact {
+    display: flex;
+    margin-top: var(--space-1);
+  }
+
+  .projects-progress.is-compact .projects-progress-track {
+    height: 3px;
+  }
+}
+
+/* Touch screens: chips stay 28px tall but get a larger invisible hit area, and sort buttons fill the header height. */
+@media (pointer: coarse) {
+  .projects-chip {
+    position: relative;
+  }
+
+  .projects-chip::after {
+    position: absolute;
+    inset: -8px -2px;
+    content: "";
+  }
+
+  .projects-head {
+    min-height: var(--tap-target);
+  }
+
+  .projects-sort {
+    min-height: var(--tap-target);
+  }
+}

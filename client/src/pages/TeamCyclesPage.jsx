@@ -1,6 +1,7 @@
 import EmptyState from '../components/EmptyState.jsx'
 import { Cycle } from '../components/EmptyPictures.jsx'
 import { Link, useParams } from 'react-router'
+import ContextLink from '../components/ContextLink.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
 import QueryState from '../components/QueryState.jsx'
@@ -15,7 +16,7 @@ export default function TeamCyclesPage() {
   const cycles = useCycles(teamKey)
 
   return (
-    <QueryState query={team} label="the team" skeleton="page">
+    <QueryState query={team} label="the team">
       {teamData => (
         <div className="cycles-page">
           <PageHeader title={`${teamData.name} cycles`} meta={cycles.data && countOf(cycles.data.length, 'cycle')}>
@@ -31,12 +32,13 @@ export default function TeamCyclesPage() {
                 <ul className="simple-rows">
                   {data.map(cycle => (
                     <li key={cycle.id}>
-                      <Link to={`/team/${teamKey}/cycles/${cycle.number}`} className="simple-row is-cycle">
+                      <ContextLink to={`/team/${teamKey}/cycles/${cycle.number}`} className="simple-row is-cycle"
+                        name={`Cycle ${cycle.number}`} openLabel="Open cycle" showActions>
                         <span className="simple-row-name">Cycle {cycle.number}</span>
                         <span className={`cycle-state is-${cycle.state}`}>{stateLabels[cycle.state]}</span>
                         <span className="simple-row-meta">{formatDateRange(cycle.startDate, cycle.endDate)}</span>
                         <ProgressBar progress={cycle.progress} />
-                      </Link>
+                      </ContextLink>
                     </li>
                   ))}
                 </ul>

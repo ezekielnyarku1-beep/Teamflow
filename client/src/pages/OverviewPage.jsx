@@ -3,14 +3,17 @@ import { Checklist, Folder } from '../components/EmptyPictures.jsx'
 import { useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import IssueLink from '../components/IssueLink.jsx'
+import IssueContextMenu from '../components/IssueContextMenu.jsx'
 import PriorityIcon from '../components/PriorityIcon.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
+import ProjectActionLink from '../components/ProjectActionLink.jsx'
 import QueryState from '../components/QueryState.jsx'
 import StatusIcon from '../components/StatusIcon.jsx'
 import { closedStatuses, priorities, priorityLabel, statusLabel } from '../lib/issueOptions.js'
 import { formatShortDate } from '../lib/format.js'
-import { useIssues, useProjects } from '../lib/queries.js'
+import { useIsAdmin, useIssues, useProjects } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
+import { useIssueMenu } from '../lib/useIssueMenu.js'
 import './overview.css'
 
 const shownPriorities = 5
@@ -23,7 +26,9 @@ export default function OverviewPage() {
   const [params, setParams] = useSearchParams()
   const teamView = params.get('scope') === 'team'
   const issues = useIssues(teamView ? {} : { assignee: 'me' })
+  const { issue: menuIssue, anchor, openIssueMenu, closeIssueMenu } = useIssueMenu(issues.data)
   const projects = useProjects()
+  const isAdmin = useIsAdmin()
   const { openCreateIssue } = useShell()
   const today = new Date().toLocaleDateString('en-CA')
   const overdue = issue => Boolean(issue.dueDate && issue.dueDate < today)
@@ -70,7 +75,7 @@ export default function OverviewPage() {
                   <ul className="overview-priorities">
                     {sorted.map(issue => (
                       <li key={issue.id}>
-                        <IssueLink identifier={issue.identifier} className="overview-issue">
+                        <IssueLink identifier={issue.identifier} className="overview-issue" onContextMenu={event => openIssueMenu(issue, event)}>
                           <StatusIcon status={issue.status} />
                           <span className="overview-issue-text">
                             <strong>{issue.title}</strong>
@@ -110,20 +115,20 @@ export default function OverviewPage() {
               <h2 id="progress-heading">Project progress</h2>
               <Link to="/projects">View all</Link>
             </div>
-            <QueryState query={projects} label="projects" skeleton="short">
+            <QueryState query={projects} label="projects">
               {data => {
                 // Every project with work left, including new ones with no issues yet (the bar says "No issues yet").
-                // Only finished projects, where every issue is done or canceled, are left out.
+                // Only finished projects, where every issue is done, are left out.
                 const active = data.filter(({ progress }) => progress.issueCount === 0 || progress.doneCount < progress.activeCount)
                 return active.length ? (
                   <ul className="overview-projects">
                     {active.map(project => (
                       <li key={project.id}>
-                        <Link className="overview-project" to={'/projects/' + project.id}>
+                        <ProjectActionLink className="overview-project" project={project} canEdit={isAdmin}>
                           <strong>{project.name}</strong>
                           <span className="overview-project-team">{project.team.name}</span>
                           <ProgressBar progress={project.progress} />
-                        </Link>
+                        </ProjectActionLink>
                       </li>
                     ))}
                   </ul>
@@ -133,6 +138,10 @@ export default function OverviewPage() {
           </section>
         </div>
       </div>
+      {menuIssue && (
+        <IssueContextMenu key={`${menuIssue.identifier}-${anchor.x}-${anchor.y}`} issue={menuIssue}
+          x={anchor.x} y={anchor.y} trigger={anchor.trigger} onClose={closeIssueMenu} />
+      )}
     </div>
   )
 }

@@ -13,11 +13,9 @@ enum Role {
 }
 
 enum IssueStatus {
-  BACKLOG
   TODO
   IN_PROGRESS
   DONE
-  CANCELED
 }
 
 enum IssuePriority {

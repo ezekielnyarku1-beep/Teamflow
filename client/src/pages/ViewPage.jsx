@@ -52,7 +52,7 @@ export default function ViewPage() {
   const view = useView(viewId)
 
   return (
-    <QueryState query={view} label="the view" skeleton="page">
+    <QueryState query={view} label="the view">
       {data => (
         <IssuesView
           key={`${data.id}-${data.team?.key ?? 'all'}`}

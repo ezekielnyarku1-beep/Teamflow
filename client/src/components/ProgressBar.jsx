@@ -1,11 +1,11 @@
-// Done and in-progress share of a project's or cycle's issues. Canceled issues are left out of the total.
+// Done and in-progress share of a project's or cycle's issues.
 export default function ProgressBar({ progress }) {
   const { issueCount, activeCount, doneCount, inProgressCount = 0, donePercent, inProgressPercent } = progress
 
   if (issueCount === 0 || activeCount === 0) {
     return (
       <div className="progress is-empty">
-        <span className="progress-caption">{issueCount === 0 ? 'No issues yet' : 'All issues canceled'}</span>
+        <span className="progress-caption">No issues yet</span>
       </div>
     )
   }

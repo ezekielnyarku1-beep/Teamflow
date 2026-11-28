@@ -1,18 +1,22 @@
 import EmptyState from './EmptyState.jsx'
 import { Checklist, Issue, Filter, Cycle, Folder, Layers } from './EmptyPictures.jsx'
 import { useCallback, useEffect, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router'
+import { useLocation, useSearchParams } from 'react-router'
 import IssueBoard from './IssueBoard.jsx'
 import IssueContextMenu from './IssueContextMenu.jsx'
 import IssueFilters from './IssueFilters.jsx'
 import IssueList from './IssueList.jsx'
 import PageHeader from './PageHeader.jsx'
 import QueryState from './QueryState.jsx'
+import { Download } from 'lucide-react'
+import { csvFileName, downloadCsv, issuesToCsv } from '../lib/csv.js'
 import { countOf } from '../lib/format.js'
+import { iconProps } from '../lib/icons.js'
 import { applyFilter, emptyFilter } from '../lib/issueFilter.js'
 import { recall, remember } from '../lib/pageMemory.js'
-import { useDeleteIssue, useIssues, useTeams, useUpdateIssue } from '../lib/queries.js'
+import { useIssues, useTeams } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
+import { useIssueMenu } from '../lib/useIssueMenu.js'
 
 const views = [
   { value: 'list', label: 'List' },
@@ -22,15 +26,10 @@ const views = [
 export default function IssuesView({ title, filters, teamKey, cycleId, summary, initialFilter = emptyFilter, actions }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
-  const navigate = useNavigate()
   const [filter, setFilter] = useState(() => recall('filter', location.key) ?? initialFilter)
-  const [menu, setMenu] = useState(null)
-  const { openCreateIssue, showToast } = useShell()
+  const { openCreateIssue } = useShell()
   const issues = useIssues(filters)
-  const updateIssue = useUpdateIssue()
-  const deleteIssue = useDeleteIssue()
-  const menuIssue = menu && issues.data?.find(issue => issue.identifier === menu.identifier)
-  const closeMenu = useCallback(() => setMenu(null), [])
+  const { issue: menuIssue, anchor, openIssueMenu, closeIssueMenu } = useIssueMenu(issues.data)
   const view = searchParams.get('view') === 'board' ? 'board' : 'list'
 
   const setParam = useCallback((name, value) => {
@@ -45,41 +44,6 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
   useEffect(() => {
     remember('filter', location.key, filter)
   }, [location.key, filter])
-
-  function openMenu(issue, event) {
-    event.preventDefault()
-    const box = event.currentTarget.getBoundingClientRect()
-    setMenu({ identifier: issue.identifier, x: event.clientX || box.left + 16, y: event.clientY || box.bottom })
-  }
-
-  function changeIssue(changes, message, close) {
-    const { identifier } = menuIssue
-    if (close) closeMenu()
-    showToast(message)
-    updateIssue.mutateAsync({ identifier, changes }).catch(error => showToast(`${identifier} was not changed: ${error.message}`))
-  }
-
-  function copyIssue(kind) {
-    const { identifier } = menuIssue
-    closeMenu()
-    navigator.clipboard.writeText(kind === 'id' ? identifier : `${window.location.origin}/issue/${identifier}`).then(
-      () => showToast(kind === 'id' ? `Copied ${identifier}` : 'Link copied'),
-      () => showToast('Your browser did not allow copying.'),
-    )
-  }
-
-  function openFromMenu(identifier) {
-    closeMenu()
-    navigate(`/issue/${identifier}`)
-  }
-
-  function removeIssue(identifier) {
-    closeMenu()
-    deleteIssue.mutateAsync(identifier).then(
-      () => showToast(`Deleted ${identifier}`),
-      error => showToast(`${identifier} was not deleted: ${error.message}`),
-    )
-  }
 
   const teams = useTeams()
   const visible = issues.data ? applyFilter(issues.data, filter) : []
@@ -105,11 +69,17 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
             ))}
           </div>
           {actions?.(filter)}
+          <button type="button" className="button" disabled={!visible.length}
+            title={visible.length ? `Download the ${countOf(visible.length, 'issue')} shown as a spreadsheet file` : 'No issues to export'}
+            onClick={() => downloadCsv(csvFileName(title), issuesToCsv(visible))}>
+            <Download {...iconProps} />
+            Export CSV
+          </button>
         </PageHeader>
         {summary}
         <QueryState query={issues} label="issues">
           {data => {
-            if (!data.length && view === 'board') return <IssueBoard issues={data} onMenu={openMenu} />
+            if (!data.length && view === 'board') return <IssueBoard issues={data} onMenu={openIssueMenu} />
             if (!data.length) {
               return (
                 <EmptyState illustration={filters?.assignee ? Checklist : filters?.project ? Folder : filters?.cycle ? Cycle : initialFilter !== emptyFilter ? Layers : Issue} title="No issues here yet" description="Issues in this list will appear here.">
@@ -129,22 +99,19 @@ export default function IssuesView({ title, filters, teamKey, cycleId, summary, 
               )
             }
             return view === 'board'
-              ? <IssueBoard issues={visible} onMenu={openMenu} />
-              : <IssueList issues={visible} onMenu={openMenu} />
+              ? <IssueBoard issues={visible} onMenu={openIssueMenu} />
+              : <IssueList issues={visible} onMenu={openIssueMenu} />
           }}
         </QueryState>
       </div>
       {menuIssue && (
         <IssueContextMenu
-          key={menuIssue.identifier + menu.x + menu.y}
+          key={`${menuIssue.identifier}-${anchor.x}-${anchor.y}`}
           issue={menuIssue}
-          x={menu.x}
-          y={menu.y}
-          onChange={changeIssue}
-          onCopy={copyIssue}
-          onOpen={openFromMenu}
-          onDelete={removeIssue}
-          onClose={closeMenu}
+          x={anchor.x}
+          y={anchor.y}
+          trigger={anchor.trigger}
+          onClose={closeIssueMenu}
         />
       )}
     </div>

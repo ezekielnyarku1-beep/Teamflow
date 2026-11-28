@@ -6,7 +6,7 @@ import { prisma } from '../src/db.js'
 after(() => prisma.$disconnect())
 
 test('statuses are in the order from the prompt', () => {
-  assert.deepEqual(Object.values(IssueStatus), ['BACKLOG', 'TODO', 'IN_PROGRESS', 'DONE', 'CANCELED'])
+  assert.deepEqual(Object.values(IssueStatus), ['TODO', 'IN_PROGRESS', 'DONE'])
 })
 
 test('priorities are in the order from the prompt', () => {

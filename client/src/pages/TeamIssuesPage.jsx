@@ -16,7 +16,7 @@ export default function TeamIssuesPage() {
   const team = useTeam(teamKey)
 
   return (
-    <QueryState query={team} label="the team" skeleton="page">
+    <QueryState query={team} label="the team">
       {data => (
         <IssuesView
           key={data.key}

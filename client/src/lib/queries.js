@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as api from './api.js'
 import { queryClient } from './queryClient.js'
+import { useShell } from './shellContext.js'
 
 const teamQuery = key => ({ queryKey: ['team', key], queryFn: () => api.getTeam(key) })
 const projectsQuery = (filters = {}) => ({ queryKey: ['projects', filters], queryFn: () => api.getProjects(filters) })
@@ -39,6 +40,8 @@ export const useMe = () => useQuery({ queryKey: ['me'], queryFn: api.getMe })
 export const useTeams = () => useQuery({ queryKey: ['teams'], queryFn: api.getTeams })
 export const useTeam = key => useQuery(teamQuery(key))
 export const useCycles = (key, enabled = true) => useQuery({ queryKey: ['cycles', key], queryFn: () => api.getCycles(key), enabled })
+export const usePerson = (id, since) => useQuery({ queryKey: ['person', id, since], queryFn: () => api.getPerson(id, since), enabled: Boolean(id), refetchInterval: 60000 })
+export const useTeamMomentum = (key, today) => useQuery({ queryKey: ['momentum', key, today], queryFn: () => api.getTeamMomentum(key, today), refetchInterval: 60000 })
 export const useViews = () => useQuery({ queryKey: ['views'], queryFn: api.getViews })
 export const useView = id => useQuery({ queryKey: ['view', id], queryFn: () => api.getView(id) })
 export const useNotifications = () => useQuery({ queryKey: ['notifications'], queryFn: api.getNotifications, refetchInterval: 60000 })
@@ -50,6 +53,7 @@ export const useLabels = () => useQuery(labelsQuery)
 export const useUsers = () => useQuery({ queryKey: ['users'], queryFn: api.getUsers })
 export const useWorkspace = () => useQuery({ queryKey: ['workspace'], queryFn: api.getWorkspace })
 export const useIsAdmin = () => useMe().data?.role === 'ADMIN'
+export const useIssueStats = scope => useQuery({ queryKey: ['issue-stats', scope], queryFn: () => api.getIssueStats(scope) })
 
 function useSaving(mutationFn, keysToRefresh) {
   const client = useQueryClient()
@@ -71,7 +75,14 @@ export const useSaveView = () => useSaving(
   ({ id, fields }) => (id ? api.updateView(id, fields) : api.createView(fields)),
   ['views', 'view'],
 )
-export const useDeleteView = () => useSaving(api.deleteView, ['views'])
+export function useDeleteView() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: api.deleteView,
+    onSuccess: (_data, id) => client.removeQueries({ queryKey: ['view', id], exact: true }),
+    onSettled: () => client.invalidateQueries({ queryKey: ['views'] }),
+  })
+}
 export const useMarkNotification = () => useSaving(({ id, read }) => api.markNotification(id, read), ['notifications'])
 export const useMarkAllNotificationsRead = () => useSaving(api.markAllNotificationsRead, ['notifications'])
 export const useSaveProject = () => useSaving(
@@ -79,7 +90,7 @@ export const useSaveProject = () => useSaving(
   ['projects', 'project'],
 )
 
-const workDataKeys = ['issues', 'issue', 'projects', 'project', 'teams', 'team', 'cycles']
+const workDataKeys = ['issues', 'issue', 'issue-stats', 'projects', 'project', 'teams', 'team', 'cycles', 'person', 'momentum']
 const fieldsShownRightAway = ['status', 'priority', 'title', 'description', 'dueDate']
 
 function useRefreshWorkData() {
@@ -90,9 +101,15 @@ function useRefreshWorkData() {
 export function useUpdateIssue() {
   const client = useQueryClient()
   const refresh = useRefreshWorkData()
+  const shell = useShell()
   return useMutation({
     mutationFn: ({ identifier, changes }) => api.updateIssue(identifier, changes),
     onMutate: async ({ identifier, changes }) => {
+      if (changes.status === 'DONE') {
+        const before = client.getQueryData(['issue', identifier])
+          ?? client.getQueriesData({ queryKey: ['issues'] }).flatMap(([, issues]) => issues ?? []).find(issue => issue.identifier === identifier)
+        if (before?.status !== 'DONE') shell?.showToast(`Nice! ${identifier} is done ✓`)
+      }
       const teamKey = identifier.split('-')[0]
       const labels = client.getQueryData(['labels'])
       const members = client.getQueryData(['team', teamKey])?.members
@@ -120,6 +137,17 @@ export function useDeleteIssue() {
 export function useCreateIssue() {
   const refresh = useRefreshWorkData()
   return useMutation({ mutationFn: api.createIssue, onSettled: refresh })
+}
+
+// Adds or removes a "blocked by" link. The server answers with the updated issue, so the page updates at once.
+export function useBlocker(identifier) {
+  const client = useQueryClient()
+  const refresh = useRefreshWorkData()
+  return useMutation({
+    mutationFn: ({ blocker, remove }) => (remove ? api.removeBlocker(identifier, blocker) : api.addBlocker(identifier, blocker)),
+    onSuccess: issue => client.setQueryData(['issue', identifier], issue),
+    onSettled: refresh,
+  })
 }
 
 export function useAddComment(identifier) {

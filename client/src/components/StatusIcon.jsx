@@ -1,15 +1,28 @@
-import { Circle, CircleCheck, CircleDashed, CircleX, Contrast } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Circle, CircleCheck, Contrast } from 'lucide-react'
 import { iconProps } from '../lib/icons.js'
 
 const icons = {
-  BACKLOG: CircleDashed,
   TODO: Circle,
   IN_PROGRESS: Contrast,
   DONE: CircleCheck,
-  CANCELED: CircleX,
 }
 
 export default function StatusIcon({ status }) {
   const Icon = icons[status] ?? Circle
-  return <Icon {...iconProps} className={`status-icon is-${status}`} />
+  // Pop only when the status changes to Done while on screen, not for issues that were already done.
+  const previous = useRef(status)
+  const [justDone, setJustDone] = useState(false)
+  useEffect(() => {
+    if (status === 'DONE' && previous.current !== 'DONE') setJustDone(true)
+    previous.current = status
+  }, [status])
+
+  return (
+    <Icon
+      {...iconProps}
+      className={`status-icon is-${status}${justDone && status === 'DONE' ? ' is-just-done' : ''}`}
+      onAnimationEnd={() => setJustDone(false)}
+    />
+  )
 }

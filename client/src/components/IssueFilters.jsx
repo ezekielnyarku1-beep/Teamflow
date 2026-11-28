@@ -60,7 +60,7 @@ export default function IssueFilters({ issues, filter, onChange }) {
             <legend>Display</legend>
             <label className="filter-option">
               <input type="checkbox" checked={filter.showClosed} onChange={event => set('showClosed')(event.target.checked)} />
-              Show done and canceled
+              Show done issues
             </label>
           </fieldset>
           {activeCount > 0 && (

@@ -9,7 +9,7 @@ export default function ProjectPage() {
   const project = useProject(projectId)
 
   return (
-    <QueryState query={project} label="the project" skeleton="page">
+    <QueryState query={project} label="the project">
       {data => (
         <IssuesView
           key={data.id}

@@ -1,8 +1,9 @@
 ﻿import EmptyState from '../../components/EmptyState.jsx'
 import { Search } from '../../components/EmptyPictures.jsx'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
 import { ArrowLeft, Building2, ChevronDown, Settings2, Tags, UserRound, UsersRound, Network } from 'lucide-react'
+import Popover from '../../components/Popover.jsx'
 import { useMe } from '../../lib/queries.js'
 import { iconProps } from '../../lib/icons.js'
 import './settings.css'
@@ -16,35 +17,50 @@ const destinations = [
   { path: '/settings/labels', label: 'Labels', icon: Tags, admin: true },
 ]
 
-function SettingsNavigation({ current, items }) {
-  const [open, setOpen] = useState(false)
+function SettingsDirectory({ current, items, onChoose, className }) {
+  const searchId = useId()
   const [filter, setFilter] = useState('')
-  const selected = items.find(item => item.path === current)
-  const CurrentIcon = selected?.icon ?? Settings2
   const term = filter.trim().toLowerCase()
   const matches = items.filter(item => item.label.toLowerCase().includes(term))
 
   return (
+    <div className={className}>
+      <label htmlFor={searchId} className="visually-hidden">Search settings</label>
+      <input id={searchId} className="input" type="search" placeholder="Search settings" value={filter} onChange={event => setFilter(event.target.value)} />
+      <ul className="settings-nav-group">
+        {matches.map(({ path, label, icon: Icon }) => (
+          <li key={path}>
+            <Link to={path} aria-current={path === current ? 'page' : undefined} onClick={onChoose}>
+              <Icon {...iconProps} /><span>{label}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      {!matches.length && (onChoose
+        ? <p className="picker-empty" role="status">No matching settings</p>
+        : <EmptyState illustration={Search} title="No matching settings" description="Try a different settings name." compact role="status" />)}
+    </div>
+  )
+}
+
+function SettingsNavigation({ current, items }) {
+  const selected = items.find(item => item.path === current)
+  const CurrentIcon = selected?.icon ?? Settings2
+
+  return (
     <nav className="settings-sidebar" aria-label="Settings">
       <Link to="/overview" className="settings-back"><ArrowLeft {...iconProps} />Back to app</Link>
-      <button type="button" className="button settings-switch" aria-expanded={open} aria-controls="settings-directory"
-        onClick={() => setOpen(!open)}>
-        <CurrentIcon {...iconProps} />{selected?.label ?? 'Settings'}<ChevronDown {...iconProps} />
-      </button>
-      <div id="settings-directory" className="settings-directory" data-open={open}>
-        <label htmlFor="settings-search" className="visually-hidden">Search settings</label>
-        <input id="settings-search" className="input" type="search" placeholder="Search settings" value={filter} onChange={event => setFilter(event.target.value)} />
-        <ul className="settings-nav-group">
-          {matches.map(({ path, label, icon: Icon }) => (
-            <li key={path}>
-              <Link to={path} aria-current={path === current ? 'page' : undefined} onClick={() => setOpen(false)}>
-                <Icon {...iconProps} />{label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        {!matches.length && <EmptyState illustration={Search} title="No matching settings" description="Try a different settings name." compact role="status" />}
+      <div className="settings-mobile-directory">
+        <Popover
+          label={`Settings sections, ${selected?.label ?? 'Settings'}`}
+          buttonClassName="button settings-switch"
+          align="end"
+          buttonContent={<><CurrentIcon {...iconProps} /><span>{selected?.label ?? 'Settings'}</span><ChevronDown {...iconProps} /></>}
+        >
+          {close => <SettingsDirectory current={current} items={items} onChoose={close} className="settings-directory-panel" />}
+        </Popover>
       </div>
+      <SettingsDirectory current={current} items={items} className="settings-directory" />
     </nav>
   )
 }

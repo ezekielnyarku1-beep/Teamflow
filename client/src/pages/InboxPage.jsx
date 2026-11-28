@@ -1,7 +1,8 @@
 import EmptyState from '../components/EmptyState.jsx'
 import { Inbox } from '../components/EmptyPictures.jsx'
-import { Link } from 'react-router'
+import { Check, Circle } from 'lucide-react'
 import Avatar from '../components/Avatar.jsx'
+import ContextLink from '../components/ContextLink.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import QueryState from '../components/QueryState.jsx'
 import StatusIcon from '../components/StatusIcon.jsx'
@@ -12,6 +13,7 @@ const actions = {
   ASSIGNED: 'assigned you',
   COMMENTED: 'commented on',
   STATUS_CHANGED: 'changed the status of',
+  MENTIONED: 'mentioned you on',
 }
 
 export default function InboxPage() {
@@ -34,14 +36,21 @@ export default function InboxPage() {
       <QueryState query={notifications} label="your inbox">
         {data =>
           data.notifications.length === 0 ? (
-            <EmptyState illustration={Inbox} title="Nothing here yet" description="Assignments, status changes, and comments on your issues appear here." />
+            <EmptyState illustration={Inbox} title="Nothing here yet" description="Assignments, mentions, status changes and comments on your issues appear here." />
           ) : (
             <ul className="inbox-list">
               {data.notifications.map(notification => (
                 <li key={notification.id} className={notification.read ? 'inbox-item' : 'inbox-item is-unread'}>
-                  <Link
+                  <ContextLink
                     to={`/issue/${notification.issue.identifier}`}
                     className="inbox-link"
+                    name={notification.issue.identifier}
+                    openLabel="Open issue"
+                    actions={mark.isPending ? [] : [{
+                      label: notification.read ? 'Mark unread' : 'Mark read',
+                      icon: notification.read ? Circle : Check,
+                      run: () => mark.mutate({ id: notification.id, read: !notification.read }),
+                    }]}
                     onClick={() => {
                       if (!notification.read) mark.mutate({ id: notification.id, read: true })
                     }}
@@ -62,7 +71,7 @@ export default function InboxPage() {
                       {formatDateTime(notification.createdAt)}
                     </time>
                     {!notification.read && <span className="visually-hidden">, unread</span>}
-                  </Link>
+                  </ContextLink>
                   <button
                     type="button"
                     className="button inbox-toggle"

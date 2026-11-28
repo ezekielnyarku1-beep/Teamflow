@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ChevronDown, Settings, UserPlus } from 'lucide-react'
+import { ChevronDown, LogOut, Settings, UserPlus } from 'lucide-react'
 import Avatar from './Avatar.jsx'
 import Popover from './Popover.jsx'
 import { iconProps } from '../lib/icons.js'
@@ -11,6 +11,7 @@ import './accountMenu.css'
 function AccountMenuList({ me, onClose }) {
   const navigate = useNavigate()
   const listRef = useRef(null)
+  const listId = useId()
   const logOut = useFormAction()
   const [active, setActive] = useState(0)
 
@@ -30,7 +31,7 @@ function AccountMenuList({ me, onClose }) {
   ]
 
   useEffect(() => {
-    listRef.current.focus()
+    listRef.current.focus({ preventScroll: true })
   }, [])
 
   function choose(item) {
@@ -52,11 +53,18 @@ function AccountMenuList({ me, onClose }) {
 
   return (
     <div className="account-menu">
-      <p className="account-menu-email">{me.email}</p>
-      <ul ref={listRef} className="picker" role="menu" aria-label="Account" tabIndex={-1} onKeyDown={handleKey}>
+      <div className="account-menu-identity">
+        <Avatar name={me.name} />
+        <div className="account-menu-user">
+          <strong>{me.name}</strong>
+          <span>{me.email}</span>
+        </div>
+      </div>
+      <ul ref={listRef} className="picker" role="menu" aria-label="Account" aria-activedescendant={`${listId}-${active}`} tabIndex={-1} onKeyDown={handleKey}>
         {items.map((item, index) => (
           <li
             key={item.key}
+            id={`${listId}-${index}`}
             role="menuitem"
             aria-disabled={logOut.busy || undefined}
             className={[index === active && 'is-active', item.divided && 'is-divided'].filter(Boolean).join(' ') || undefined}
@@ -65,6 +73,7 @@ function AccountMenuList({ me, onClose }) {
           >
             {item.key === 'settings' && <Settings {...iconProps} />}
             {item.key === 'members' && <UserPlus {...iconProps} />}
+            {item.key === 'logout' && <LogOut {...iconProps} />}
             <span className="picker-label">{item.label}</span>
           </li>
         ))}
@@ -83,6 +92,7 @@ export default function AccountMenu({ me }) {
     <Popover
       label={`Account menu for ${me.name}`}
       buttonClassName="account-button"
+      popupRole="menu"
       buttonContent={
         <>
           <Avatar name={me.name} />

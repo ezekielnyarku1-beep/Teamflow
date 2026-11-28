@@ -1,7 +1,9 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import IssueActivity from './IssueActivity.jsx'
 import IssueComments from './IssueComments.jsx'
+import IssueLink from './IssueLink.jsx'
 import IssueProperties from './IssueProperties.jsx'
+import IssueRelations from './IssueRelations.jsx'
 import QueryState from './QueryState.jsx'
 import { useIssue, useUpdateIssue } from '../lib/queries.js'
 
@@ -110,6 +112,14 @@ function IssueEditor({ issue }) {
       <h1 className="issue-detail-id">
         {issue.identifier} <span className="muted">in {issue.team.name}</span>
       </h1>
+      {issue.parent && (
+        <p className="issue-parent">
+          Sub-issue of{' '}
+          <IssueLink identifier={issue.parent.identifier} contextActions>
+            {issue.parent.identifier} {issue.parent.title}
+          </IssueLink>
+        </p>
+      )}
       {updateProperties.isError && (
         <p className="inline-error" role="alert">
           The change was not saved: {updateProperties.error.message}
@@ -133,6 +143,7 @@ function IssueEditor({ issue }) {
       />
       <NotSaved draft={description} label="description" />
       <IssueProperties issue={issue} onSave={save} />
+      <IssueRelations issue={issue} />
       <IssueComments issue={issue} />
       <IssueActivity issue={issue} />
     </article>
@@ -142,7 +153,7 @@ function IssueEditor({ issue }) {
 export default function IssueDetail({ identifier }) {
   const issue = useIssue(identifier)
   return (
-    <QueryState query={issue} label="the issue" skeleton="detail">
+    <QueryState query={issue} label="the issue">
       {data => <IssueEditor key={data.id} issue={data} />}
     </QueryState>
   )

@@ -27,7 +27,7 @@
   font-weight: var(--weight-medium);
 }
 .settings-back { margin-bottom: var(--space-4); }
-.settings-sidebar .settings-switch { display: none; }
+.settings-mobile-directory { display: none; }
 .settings-sidebar a:hover,
 .settings-sidebar a[aria-current="page"] { background: var(--hover); }
 .settings-nav-group { margin-top: var(--space-5); }
@@ -91,7 +91,7 @@
 .settings-row-title,
 .settings-pair strong { font-weight: var(--weight-medium); }
 .settings-row-meta { font-size: var(--text-small); }
-.settings-role { width: auto; }
+.settings-role { width: 9rem; }
 .settings-feedback { padding: 0 var(--card-padding) var(--space-3); }
 .settings-form { display: grid; gap: var(--space-4); }
 .settings-field {
@@ -155,7 +155,18 @@
   }
   .settings-back { margin: 0; }
   .settings-directory { display: none; }
-  .settings-directory[data-open="true"] { display: block; grid-column: 1 / -1; }
-  .settings-sidebar .settings-switch { display: inline-flex; justify-self: end; align-items: center; gap: var(--space-2); min-height: var(--tap-target); }
-  .settings-switch[aria-expanded="true"] svg:last-child { transform: rotate(180deg); }
+  .settings-mobile-directory {
+    display: block;
+    min-width: 0;
+    justify-self: end;
+  }
+
+  .settings-switch { max-width: 100%; min-height: var(--tap-target); }
+  .settings-switch span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .settings-switch svg { flex: none; }
+  .settings-switch[aria-expanded="true"] svg:last-child { rotate: 180deg; }
+  .settings-directory-panel { padding: var(--space-1); }
+  .settings-directory-panel .settings-nav-group { margin-top: var(--space-2); }
+  .settings-directory-panel .settings-nav-group a { min-height: var(--tap-target); }
+  .settings-directory-panel .settings-nav-group a[aria-current="page"] { font-weight: var(--weight-semibold); }
 }

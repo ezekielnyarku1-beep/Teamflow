@@ -25,14 +25,14 @@ const detail = (identifier, as = engMember) => server.call('GET', `/api/issues/$
 
 test('sub-issues: create under a parent, see them on the parent with a done count', async () => {
   const parent = await addIssue(fixtures.eng, fixtures.engUser, { title: 'Launch', status: 'TODO' })
-  for (const [title, status] of [['Write copy', 'DONE'], ['Design page', 'IN_PROGRESS'], ['Old idea', 'CANCELED']]) {
+  for (const [title, status] of [['Write copy', 'DONE'], ['Design page', 'IN_PROGRESS']]) {
     const created = await server.call('POST', '/api/issues', { as: engMember, body: { teamKey: 'ENG', title, status, parentId: parent.id } })
     assert.equal(created.status, 201)
     assert.equal(created.body.parent.identifier, key(parent))
   }
 
   const { body } = await detail(key(parent))
-  assert.deepEqual(body.children.map(child => child.title), ['Write copy', 'Design page', 'Old idea'])
+  assert.deepEqual(body.children.map(child => child.title), ['Write copy', 'Design page'])
   assert.deepEqual(body.subIssues, { total: 2, done: 1 })
 
   const list = await server.call('GET', '/api/issues?team=ENG', { as: engMember })

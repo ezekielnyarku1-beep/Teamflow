@@ -1,11 +1,13 @@
 import EmptyState from './EmptyState.jsx'
 import { People, Layers as SavedViewsPicture } from './EmptyPictures.jsx'
 import { useRef, useState, useSyncExternalStore } from 'react'
-import { Link, matchPath, useLocation, useSearchParams } from 'react-router'
-import { ChevronDown, CircleDot, Folder, Inbox, Layers, LayoutGrid, ListChecks, Menu, Search, SquarePen, X } from 'lucide-react'
+import { matchPath, useLocation, useSearchParams } from 'react-router'
+import { Activity as ActivityIcon, ChevronDown, CircleDot, Gauge, Folder, Inbox, Layers, LayoutGrid, ListChecks, Menu, Search, SquarePen, X } from 'lucide-react'
 import AccountMenu from './AccountMenu.jsx'
+import ContextLink from './ContextLink.jsx'
 import Dialog from './Dialog.jsx'
-import { prefetchPage, useMe, useNotifications, useTeams, useViews } from '../lib/queries.js'
+import ViewActionLink from './ViewActionLink.jsx'
+import { prefetchPage, useIsAdmin, useMe, useNotifications, useTeams, useViews } from '../lib/queries.js'
 import { iconProps } from '../lib/icons.js'
 import { useShell } from '../lib/shellContext.js'
 import { useRememberedList } from '../lib/sidebarMemory.js'
@@ -18,6 +20,8 @@ const icons = {
   issues: CircleDot,
   projects: Folder,
   views: Layers,
+  activity: ActivityIcon,
+  momentum: Gauge,
 }
 
 const mobileNavigation = window.matchMedia('(max-width: 768px)')
@@ -42,10 +46,10 @@ function Chevron() {
 
 function SidebarLink({ to, active, icon: Icon, children }) {
   return (
-    <Link to={to} className="sidebar-item" aria-current={active ? 'page' : undefined} onPointerEnter={() => prefetchPage(to)}>
+    <ContextLink to={to} className="sidebar-item" aria-current={active ? 'page' : undefined} onPointerEnter={() => prefetchPage(to)}>
       {Icon && <Icon {...iconProps} className="sidebar-icon" />}
       {children}
-    </Link>
+    </ContextLink>
   )
 }
 
@@ -90,6 +94,7 @@ export default function Sidebar() {
   const pageTeam = searchParams.get('team')
   const { openCreateIssue, openCommandMenu } = useShell()
   const me = useMe()
+  const isAdmin = useIsAdmin()
   const teams = useTeams()
   const views = useViews()
   const notifications = useNotifications().data
@@ -143,6 +148,11 @@ export default function Sidebar() {
           <li>
             <SidebarLink to="/my-issues" active={onPath('/my-issues')} icon={icons.myIssues}>My issues</SidebarLink>
           </li>
+          {me.data && (
+            <li>
+              <SidebarLink to={`/people/${me.data.id}`} active={pathname === `/people/${me.data.id}`} icon={icons.activity}>My activity</SidebarLink>
+            </li>
+          )}
         </ul>
 
         <Section id="workspace" title="Workspace" closed={closedSections.has('workspace')} onToggle={() => closedSections.toggle('workspace')}>
@@ -185,10 +195,17 @@ export default function Sidebar() {
                   </button>
                   <ul id={`sidebar-team-${team.key}`} className="sidebar-links sidebar-team-links" hidden={!open}>
                     <li>
-                      <SidebarLink to={`/team/${team.key}`} active={inTeam && !onPath('/projects') && !onPath('/views')} icon={icons.issues}>
+                      <SidebarLink to={`/team/${team.key}`} active={inTeam && !onPath('/projects') && !onPath('/views') && !pathname.endsWith('/momentum')} icon={icons.issues}>
                         Issues
                       </SidebarLink>
                     </li>
+                    {isAdmin && (
+                      <li>
+                      <SidebarLink to={`/team/${team.key}/momentum`} active={pathname === `/team/${team.key}/momentum`} icon={icons.momentum}>
+                        Momentum
+                      </SidebarLink>
+                    </li>
+                    )}
                     <li>
                       <SidebarLink to={`/projects?team=${team.key}`} active={pathname === '/projects' && pageTeam === team.key} icon={icons.projects}>
                         Projects
@@ -211,9 +228,10 @@ export default function Sidebar() {
           <ul className="sidebar-links">
             {(views.data ?? []).map(view => (
               <li key={view.id}>
-                <SidebarLink to={`/views/${view.id}`} active={pathname === `/views/${view.id}`} icon={icons.views}>
+                <ViewActionLink view={view} className="sidebar-item" aria-current={pathname === `/views/${view.id}` ? 'page' : undefined}>
+                  <Layers {...iconProps} className="sidebar-icon" />
                   <span className="sidebar-item-text">{view.name}</span>
-                </SidebarLink>
+                </ViewActionLink>
               </li>
             ))}
           </ul>

@@ -1,11 +1,12 @@
 import { useDraggable } from '@dnd-kit/core'
 import Avatar from './Avatar.jsx'
 import IssueLink from './IssueLink.jsx'
+import IssueMarkers from './IssueMarkers.jsx'
 import LabelList from './LabelList.jsx'
 import PriorityIcon from './PriorityIcon.jsx'
 import StatusPicker from './StatusPicker.jsx'
 import { formatShortDate } from '../lib/format.js'
-import { priorityLabel } from '../lib/issueOptions.js'
+import { isOverdue, priorityLabel } from '../lib/issueOptions.js'
 
 export default function BoardCard({ issue, onMenu, onStatusChange }) {
   const { setNodeRef, listeners, transform, isDragging } = useDraggable({ id: issue.identifier })
@@ -26,8 +27,13 @@ export default function BoardCard({ issue, onMenu, onStatusChange }) {
       </IssueLink>
       <div className="board-card-bottom">
         <StatusPicker issue={issue} onChange={status => onStatusChange(issue, status)} />
+        <IssueMarkers issue={issue} />
         <LabelList labels={issue.labels} />
-        {issue.dueDate && <span className="issue-row-date">{formatShortDate(issue.dueDate)}</span>}
+        {issue.dueDate && (
+          <span className={isOverdue(issue) ? 'issue-row-date is-overdue' : 'issue-row-date'}>
+            {isOverdue(issue) && 'Overdue · '}{formatShortDate(issue.dueDate)}
+          </span>
+        )}
         {issue.assignee && <Avatar name={issue.assignee.name} />}
       </div>
     </li>

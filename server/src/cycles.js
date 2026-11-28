@@ -3,7 +3,7 @@ import { IssueStatus } from './generated/prisma/enums.ts'
 
 const dayInMs = 86400000
 export const cycleLengths = [1, 2]
-export const openStatuses = [IssueStatus.BACKLOG, IssueStatus.TODO, IssueStatus.IN_PROGRESS]
+export const openStatuses = [IssueStatus.TODO, IssueStatus.IN_PROGRESS]
 
 export const addDays = (date, days) => new Date(date.getTime() + days * dayInMs)
 

@@ -2,13 +2,14 @@ import EmptyState from './EmptyState.jsx'
 import { Bubbles } from './EmptyPictures.jsx'
 import { useState } from 'react'
 import Avatar from './Avatar.jsx'
-import Skeleton from './Skeleton.jsx'
+import MentionTextarea, { MentionText } from './MentionTextarea.jsx'
 import { formatDateTime } from '../lib/format.js'
-import { useAddComment } from '../lib/queries.js'
+import { useAddComment, useTeam } from '../lib/queries.js'
 
 export default function IssueComments({ issue }) {
   const [body, setBody] = useState('')
   const addComment = useAddComment(issue.identifier)
+  const people = useTeam(issue.team.key).data?.members ?? []
 
   function submit(event) {
     event.preventDefault()
@@ -22,7 +23,6 @@ export default function IssueComments({ issue }) {
   return (
     <section className="issue-section" aria-labelledby={`comments-${issue.id}`}>
       <h3 id={`comments-${issue.id}`}>Comments</h3>
-      {!issue.comments && <Skeleton label="comments" layout="short" />}
       {issue.comments?.length === 0 && <EmptyState illustration={Bubbles} title="No comments yet" description="Start the conversation below." compact />}
       <ul className="comment-list">
         {issue.comments?.map(comment => (
@@ -34,7 +34,7 @@ export default function IssueComments({ issue }) {
                 {formatDateTime(comment.createdAt)}
               </time>
             </div>
-            <p className="comment-body">{comment.body}</p>
+            <p className="comment-body"><MentionText text={comment.body} people={people} /></p>
           </li>
         ))}
       </ul>
@@ -42,14 +42,15 @@ export default function IssueComments({ issue }) {
         <label htmlFor={`new-comment-${issue.id}`} className="visually-hidden">
           Write a comment
         </label>
-        <textarea
+        <MentionTextarea
           id={`new-comment-${issue.id}`}
           className="input"
           rows={3}
           maxLength={5000}
-          placeholder="Write a comment…"
+          placeholder="Write a comment… Type @ to mention someone"
           value={body}
-          onChange={event => setBody(event.target.value)}
+          onChange={setBody}
+          people={people}
           onKeyDown={event => {
             if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) submit(event)
           }}

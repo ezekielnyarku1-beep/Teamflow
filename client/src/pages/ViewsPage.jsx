@@ -1,9 +1,10 @@
 import EmptyState from '../components/EmptyState.jsx'
 import { Layers } from '../components/EmptyPictures.jsx'
-import { Link, useSearchParams } from 'react-router'
+import { useSearchParams } from 'react-router'
 import PageHeader from '../components/PageHeader.jsx'
 import QueryState from '../components/QueryState.jsx'
 import SaveViewButton from '../components/SaveViewButton.jsx'
+import ViewActionLink from '../components/ViewActionLink.jsx'
 import { countActiveFilters, emptyFilter } from '../lib/issueFilter.js'
 import { useViews } from '../lib/queries.js'
 
@@ -32,11 +33,11 @@ export default function ViewsPage() {
             <ul className="simple-rows">
               {shown.map(view => (
                 <li key={view.id}>
-                  <Link to={`/views/${view.id}`} className="simple-row is-view">
+                  <ViewActionLink view={view} className="simple-row is-view" showActions>
                     <span className="simple-row-name">{view.name}</span>
                     <span className="simple-row-meta">{view.team?.name ?? 'All my teams'}</span>
                     <span className="simple-row-meta">{describeFilters(view.filter)}</span>
-                  </Link>
+                  </ViewActionLink>
                 </li>
               ))}
             </ul>

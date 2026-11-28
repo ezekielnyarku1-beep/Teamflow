@@ -35,13 +35,13 @@ test('an admin sees every project and can filter by team', async () => {
 
 test('project progress is calculated from its issues', async () => {
   const projectId = fixtures.engProject.id
-  for (const status of ['DONE', 'DONE', 'IN_PROGRESS', 'TODO', 'CANCELED']) {
+  for (const status of ['DONE', 'DONE', 'IN_PROGRESS', 'TODO']) {
     await addIssue(fixtures.eng, fixtures.engUser, { title: status, status, projectId })
   }
   const response = await server.call('GET', `/api/projects/${projectId}`, { as: engMember })
   assert.equal(response.status, 200)
   assert.deepEqual(response.body.progress, {
-    issueCount: 5,
+    issueCount: 4,
     activeCount: 4,
     doneCount: 2,
     inProgressCount: 1,

@@ -38,9 +38,14 @@
   white-space: nowrap;
 }
 
-.account-button svg {
+.account-button > svg {
   flex: none;
+  margin-inline-start: auto;
   color: var(--mut);
+}
+
+.account-button[aria-expanded="true"] > svg {
+  rotate: 180deg;
 }
 
 .sidebar-top .icon-button {
@@ -52,14 +57,34 @@
   color: var(--tx);
 }
 
-.account-menu-email {
-  margin: 0;
-  padding: var(--space-1) var(--space-2) var(--space-2);
+.account-menu-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-1);
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.account-menu-user {
+  display: grid;
+  min-width: 0;
+}
+
+.account-menu-user > * {
   overflow: hidden;
-  font-size: var(--text-small);
-  color: var(--mut);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.account-menu-user > span {
+  font-size: var(--text-small);
+  color: var(--mut);
+}
+
+.account-menu .picker li > svg {
+  flex: none;
+  color: var(--mut);
 }
 
 .account-menu .picker li.is-divided {

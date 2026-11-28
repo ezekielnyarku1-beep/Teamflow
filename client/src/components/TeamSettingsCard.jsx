@@ -3,6 +3,7 @@ import EmptyState from './EmptyState.jsx'
 import { People } from './EmptyPictures.jsx'
 import { useState } from 'react'
 import Avatar from './Avatar.jsx'
+import ContextLink from './ContextLink.jsx'
 import QueryState from './QueryState.jsx'
 import { formatDateWithYear } from '../lib/format.js'
 import { useAddTeamMember, useRemoveTeamMember, useTeam, useUpdateTeam } from '../lib/queries.js'
@@ -105,7 +106,10 @@ export default function TeamSettingsCard({ team, users }) {
                   {data.members.map(member => (
                     <li key={member.id} className="settings-row">
                       <Avatar name={member.name} />
-                      <span className="settings-row-main settings-row-title">{member.name}</span>
+                      <ContextLink to={`/people/${member.id}`} className="settings-row-main settings-row-title"
+                        name={member.name} openLabel="Open activity">
+                        {member.name}
+                      </ContextLink>
                       <button
                         type="button"
                         className="button"

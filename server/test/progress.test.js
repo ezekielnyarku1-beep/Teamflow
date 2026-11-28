@@ -13,24 +13,12 @@ test('no issues means 0% and an issue count of 0', () => {
   })
 })
 
-test('done and in progress are divided by all issues that are not canceled', () => {
-  const progress = calculateProgress({ BACKLOG: 1, TODO: 1, IN_PROGRESS: 1, DONE: 1, CANCELED: 4 })
-  assert.equal(progress.issueCount, 8)
+test('done and in progress are divided by all issues', () => {
+  const progress = calculateProgress({ TODO: 2, IN_PROGRESS: 1, DONE: 1 })
+  assert.equal(progress.issueCount, 4)
   assert.equal(progress.activeCount, 4)
   assert.equal(progress.donePercent, 25)
   assert.equal(progress.inProgressPercent, 25)
-})
-
-test('canceled issues never count toward done', () => {
-  const progress = calculateProgress({ DONE: 1, CANCELED: 1 })
-  assert.equal(progress.donePercent, 100)
-})
-
-test('only canceled issues gives 0% without dividing by zero', () => {
-  const progress = calculateProgress({ CANCELED: 3 })
-  assert.equal(progress.issueCount, 3)
-  assert.equal(progress.donePercent, 0)
-  assert.equal(progress.inProgressPercent, 0)
 })
 
 test('percentages are rounded to whole numbers', () => {

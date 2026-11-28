@@ -3,6 +3,7 @@ import { prisma } from '../db.js'
 import { findVisibleTeam, requireAdmin, visibleTeamsWhere } from '../access.js'
 import { cycleLengths, cycleState, startOfTodayUtc, syncCycles } from '../cycles.js'
 import { HttpError } from '../errors.js'
+import { daysAgo, loadFeed, readSince, summarize } from '../activityFeed.js'
 import { calculateProgress } from '../progress.js'
 import { loadProgress } from '../progressQueries.js'
 import { personSelect, serializeCycleRef, toDateString } from '../serializers.js'
@@ -44,6 +45,26 @@ teamsRouter.get('/:key', async (request, response) => {
   const team = await findVisibleTeam(request.user, request.params.key)
   const [members, progress] = await Promise.all([loadMembers(team.id), loadProgress('teamId', [team.id])])
   response.json({ ...serializeTeam(team, progress.get(team.id)), members })
+})
+
+// Team momentum for managers: what each member did in this team today and over the last 7 days,
+// and when they were last active. `today` is the start of today in the viewer's timezone. Admins only.
+teamsRouter.get('/:key/momentum', requireAdmin, async (request, response) => {
+  const team = await findVisibleTeam(request.user, request.params.key)
+  const todayStart = readSince(request.query.today, startOfTodayUtc())
+  const weekStart = daysAgo(6, todayStart)
+  const members = await loadMembers(team.id)
+  const teamWhere = { id: team.id }
+  const rows = await Promise.all(members.map(async member => {
+    const [events, lastActivity, lastComment] = await Promise.all([
+      loadFeed({ userId: member.id, teamWhere, since: weekStart, limit: 1000 }),
+      prisma.issueActivity.findFirst({ where: { actorId: member.id, issue: { teamId: team.id } }, orderBy: { createdAt: 'desc' }, select: { createdAt: true } }),
+      prisma.comment.findFirst({ where: { authorId: member.id, issue: { teamId: team.id } }, orderBy: { createdAt: 'desc' }, select: { createdAt: true } }),
+    ])
+    const last = [lastActivity?.createdAt, lastComment?.createdAt].filter(Boolean).sort((a, b) => b - a)[0]
+    return { ...member, ...summarize(events, todayStart), lastActiveAt: last ? last.toISOString() : null, recent: events.slice(0, 3) }
+  }))
+  response.json({ team: { key: team.key, name: team.name }, since: weekStart.toISOString(), members: rows })
 })
 
 teamsRouter.get('/:key/cycles', async (request, response) => {

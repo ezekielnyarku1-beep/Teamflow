@@ -168,7 +168,7 @@ test('a badly written issue ID is a 404, not a server error', async () => {
 })
 
 test('an admin can work in any team', async () => {
-  const created = await server.call('POST', '/api/issues', { as: admin, body: { teamKey: 'DES', title: 'Admin', status: 'BACKLOG' } })
+  const created = await server.call('POST', '/api/issues', { as: admin, body: { teamKey: 'DES', title: 'Admin', status: 'TODO' } })
   assert.equal(created.status, 201)
   const read = await server.call('GET', '/api/issues/DES-1', { as: desMember })
   assert.equal(read.status, 200)

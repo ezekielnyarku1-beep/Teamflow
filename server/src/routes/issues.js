@@ -61,7 +61,7 @@ issuesRouter.get('/', async (request, response) => {
   response.json(issues.map(serializeIssue))
 })
 
-const openStatuses = ['BACKLOG', 'TODO', 'IN_PROGRESS']
+const openStatuses = ['TODO', 'IN_PROGRESS']
 const statsWeeks = 8
 const dayMs = 24 * 60 * 60 * 1000
 const weekStart = date => {

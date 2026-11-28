@@ -6,6 +6,7 @@ import { issuesRouter } from './routes/issues.js'
 import { labelsRouter } from './routes/labels.js'
 import { meRouter } from './routes/me.js'
 import { notificationsRouter } from './routes/notifications.js'
+import { peopleRouter } from './routes/people.js'
 import { projectsRouter } from './routes/projects.js'
 import { teamsRouter } from './routes/teams.js'
 import { usersRouter } from './routes/users.js'
@@ -32,6 +33,7 @@ export function createApp({ clientOrigin, authenticate }) {
   app.use('/api/workspace', workspaceRouter)
   app.use('/api/views', viewsRouter)
   app.use('/api/notifications', notificationsRouter)
+  app.use('/api/people', peopleRouter)
 
   app.use(notFoundHandler)
   app.use(errorHandler)

@@ -11,9 +11,9 @@ export default function CyclePage() {
   const cycles = useCycles(teamKey)
 
   return (
-    <QueryState query={team} label="the team" skeleton="page">
+    <QueryState query={team} label="the team">
       {teamData => (
-        <QueryState query={cycles} label="the cycle" skeleton="page">
+        <QueryState query={cycles} label="the cycle">
           {data => {
             const cycle = data.find(item => String(item.number) === cycleNumber)
             if (!cycle) return <NotFoundPage />

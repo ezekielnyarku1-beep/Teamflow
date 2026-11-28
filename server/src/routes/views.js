@@ -26,7 +26,7 @@ function readViewFilter(value) {
     priorities: readChoiceList(value.priorities, 'Priorities', priorities),
     assigneeIds: readIdList(value.assigneeIds, 'Assignees', { max: maxFilterIds }),
     labelIds: readIdList(value.labelIds, 'Labels', { max: maxFilterIds }),
-    showClosed: readBoolean(value.showClosed, 'Show done and canceled'),
+    showClosed: readBoolean(value.showClosed, 'Show done issues'),
   }
 }
 

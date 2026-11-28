@@ -91,7 +91,7 @@ export default function CreateIssueDialog({ defaultTeamKey, cycleId, onClose }) 
   const teams = useTeams()
   return (
     <Dialog label="New issue" className="is-form" onClose={onClose}>
-      <QueryState query={teams} label="teams" skeleton="form">
+      <QueryState query={teams} label="teams">
         {data =>
           data.length ? (
             <CreateIssueForm teams={data} defaultTeamKey={defaultTeamKey} cycleId={cycleId} onClose={onClose} />

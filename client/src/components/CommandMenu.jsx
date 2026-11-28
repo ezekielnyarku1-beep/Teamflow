@@ -3,7 +3,6 @@ import { Search } from './EmptyPictures.jsx'
 import { useEffect, useId, useState } from 'react'
 import { useNavigate } from 'react-router'
 import Dialog from './Dialog.jsx'
-import Skeleton from './Skeleton.jsx'
 import { useIssues, useProjects, useTeams } from '../lib/queries.js'
 import { useShell } from '../lib/shellContext.js'
 
@@ -76,7 +75,7 @@ export default function CommandMenu({ onClose }) {
         }}
         onKeyDown={moveWithKeys}
       />
-      <ul id={listId} className="command-list" role="listbox" aria-label="Results">
+      <ul id={listId} className="command-list picker" role="listbox" aria-label="Results">
         {matches.map((command, index) => (
           <li
             key={command.id}
@@ -95,7 +94,6 @@ export default function CommandMenu({ onClose }) {
           </li>
         ))}
       </ul>
-      {isLoading && <Skeleton label="search results" layout="menu" />}
       {queries.some(query => query.isError) && (
         <p className="command-note" role="alert">
           Some results could not load.{' '}
